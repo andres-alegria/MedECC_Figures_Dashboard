@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">   <!-- working dashboard: keep drafts out of search results -->
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<script src="figures-data.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+html,body{margin:0;height:100%;background:#F2F6FA;font-family:"Public Sans",system-ui,sans-serif}
+a{color:#3E576E}a:hover{color:#E86B00}
+</style>
+</helmet>
+
+<!-- ================= ACCESS GATE ================= -->
+<sc-if value="{{ gateShow }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Access gate" style="height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:linear-gradient(180deg,#43566F 0%,#6C9ECE 100%)">
+    <div style="background:#fff;border-radius:12px;padding:12px 20px"><img src="figures/Logo.png" alt="MedECC" style="height:64px;width:auto;display:block"></div>
+    <div style="color:#fff;font-weight:700;font-size:16px">Figure Review — author access</div>
+    <div style="display:flex;flex-direction:column;gap:9px;width:270px">
+      <input type="password" value="{{ gate.val }}" onChange="{{ gate.on }}" onKeyDown="{{ gate.key }}" placeholder="Shared passphrase" style="font-family:inherit;font-size:14px;padding:10px 12px;border:none;border-radius:8px;color:#43566F;outline-color:#E86B00">
+      <button onClick="{{ gate.go }}" style="font-family:inherit;font-weight:700;font-size:14px;padding:10px;border:none;border-radius:8px;background:#E86B00;color:#fff;cursor:pointer" style-hover="background:#F09125">Enter</button>
+      <div style="font-size:12px;color:#FFD2A6;text-align:center;min-height:16px">{{ gate.msg }}</div>
+    </div>
+    <div style="font-size:11px;color:#AFC7DE;text-align:center;width:280px;line-height:1.5">Access is remembered on this device. Passphrase is in the invite email.</div>
+
+  </div>
+</sc-if>
+
+<!-- ================= DASHBOARD ================= -->
+<sc-if value="{{ appShow }}" hint-placeholder-val="{{ false }}">
+<div data-screen-label="Dashboard" style="height:100vh;display:flex;overflow:hidden">
+
+  <!-- sidebar -->
+  <div style="width:230px;flex:none;display:flex;flex-direction:column;background:#43566F">
+    <div style="padding:16px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,.12)">
+      <div style="background:#fff;border-radius:7px;padding:5px 7px"><img src="figures/Logo.png" alt="MedECC" style="height:30px;width:auto;display:block"></div>
+      <div style="font-weight:800;font-size:13px;color:#fff;line-height:1.3">Figure<br>Review</div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:10px 0">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="0">
+        <div onClick="{{ n.on }}" style="display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;background:{{ n.bg }};border-left:3px solid {{ n.mark }}" style-hover="background:rgba(255,255,255,.08)">
+          <span style="font-weight:700;font-size:13px;color:{{ n.fg }}">{{ n.label }}</span>
+          <span style="margin-left:auto;font-size:11px;font-weight:600;color:#AFC7DE">{{ n.count }}</span>
+        </div>
+      </sc-for>
+    </div>
+    <div style="padding:14px 18px;border-top:1px solid rgba(255,255,255,.12);font-size:10.5px;line-height:1.6;color:#AFC7DE">
+      {{ meta.summary }}
+    </div>
+  </div>
+
+  <!-- main -->
+  <div style="flex:1;display:flex;flex-direction:column;min-width:0;position:relative">
+    <div style="display:flex;align-items:center;gap:14px;padding:13px 22px;background:#fff;border-bottom:1px solid rgba(67,86,111,.1)">
+      <div style="font-weight:800;font-size:17px;color:#43566F">{{ heading }}</div>
+      <div style="font-size:11.5px;color:#7C8DA0;font-weight:600">{{ headingSub }}</div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat({{ cols }},1fr);gap:15px;align-content:start">
+      <sc-for list="{{ figs }}" as="f" hint-placeholder-count="0">
+        <div onClick="{{ f.on }}" style="background:#fff;border:1px solid rgba(67,86,111,.12);border-radius:9px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;min-height:272px" style-hover="border:1px solid #3E576E;box-shadow:0 3px 10px rgba(32,56,168,.16)">
+          <div style="height:195px;min-height:195px;flex:none;background:#fff;border-bottom:1px solid rgba(67,86,111,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px;position:relative">
+            <sc-if value="{{ f.hasImg }}" hint-placeholder-val="{{ false }}">
+              <img src="{{ f.thumb }}" onError="{{ f.thumbErr }}" loading="lazy" alt="{{ f.label }}" style="max-width:100%;max-height:100%;object-fit:contain">
+            </sc-if>
+            <sc-if value="{{ f.noImg }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:11.5px;color:#B3261E;font-weight:700">no file yet</div>
+            </sc-if>
+            <sc-if value="{{ f.isNew }}" hint-placeholder-val="{{ false }}">
+              <span style="position:absolute;top:7px;right:7px;font-size:9.5px;font-weight:800;letter-spacing:.05em;padding:3px 7px;border-radius:999px;background:#E86B00;color:#fff">NEW {{ f.latestLabel }}</span>
+            </sc-if>
+          </div>
+          <div style="padding:10px 12px 14px;display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;align-items:center;gap:7px">
+              <span style="font-weight:800;font-size:13.5px;color:#43566F">{{ f.label }}</span>
+              <span style="margin-left:auto;font-size:10.5px;color:#7C8DA0;font-weight:700">{{ f.cLabel }}</span>
+            </div>
+            <div style="font-size:11px;line-height:1.45;color:#4a5680;height:32px;overflow:hidden">{{ f.capShort }}</div>
+          </div>
+        </div>
+      </sc-for>
+      <sc-if value="{{ listEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="grid-column:1/-1;padding:70px 20px;text-align:center;color:#8FA3B5;font-size:13px;font-weight:600">No figures in this category yet — they will appear here automatically once added.</div>
+      </sc-if>
+    </div>
+
+    <!-- detail overlay -->
+    <sc-if value="{{ dOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="position:absolute;inset:0;background:rgba(67,86,111,.5);display:flex;align-items:center;justify-content:center;z-index:5;padding:24px" onClick="{{ d.close }}">
+        <div style="width:min(1190px,100%);height:min(760px,100%);background:#fff;border-radius:12px;display:grid;grid-template-columns:1fr 310px;grid-template-rows:minmax(0,100%);overflow:hidden;box-shadow:0 16px 50px rgba(10,20,60,.4);position:relative" onClick="{{ d.stop }}">
+          <button onClick="{{ d.close }}" style="position:absolute;top:12px;right:12px;z-index:3;width:29px;height:29px;border-radius:99px;border:none;background:#EEF6FD;color:#43566F;font-size:14px;cursor:pointer;font-family:inherit;font-weight:700" style-hover="background:#E86B00;color:#fff">✕</button>
+          <div style="display:flex;flex-direction:column;border-right:1px solid rgba(67,86,111,.1);min-width:0;min-height:0">
+            <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid rgba(67,86,111,.08)">
+              <button onClick="{{ d.prev }}" style="width:29px;height:29px;border-radius:99px;border:1px solid rgba(67,86,111,.2);background:#fff;color:#43566F;font-size:13px;cursor:pointer;font-family:inherit" style-hover="background:#EEF6FD">←</button>
+              <button onClick="{{ d.next }}" style="width:29px;height:29px;border-radius:99px;border:1px solid rgba(67,86,111,.2);background:#fff;color:#43566F;font-size:13px;cursor:pointer;font-family:inherit" style-hover="background:#EEF6FD">→</button>
+              <span style="font-weight:800;font-size:16px;color:#43566F">{{ d.sel.label }}</span>
+              <div style="margin-left:auto;display:flex;gap:5px;align-items:center">
+                <sc-for list="{{ d.sel.verChips }}" as="v" hint-placeholder-count="1">
+                  <button onClick="{{ v.on }}" style="padding:4px 10px;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:700;font-size:11.5px;border:1px solid {{ v.bd }};background:{{ v.bg }};color:{{ v.fg }}">{{ v.label }}</button>
+                </sc-for>
+                {{ d.sel.dlEl }}
+              </div>
+            </div>
+            <div style="flex:1 1 240px;min-height:120px;max-height:420px;display:flex;align-items:center;justify-content:center;background:#F7FAFD;padding:16px;overflow:hidden">
+              {{ d.sel.imgEl }}
+              <sc-if value="{{ d.sel.noImg }}" hint-placeholder-val="{{ false }}">
+                <div style="border:2px dashed rgba(179,38,30,.4);border-radius:10px;padding:38px 56px;text-align:center;color:#B3261E;font-weight:700;font-size:14px">No file uploaded yet<br><span style="font-weight:400;font-size:12px;color:#8a4a46">caption exists in the spreadsheet</span></div>
+              </sc-if>
+            </div>
+            <div style="flex:1;padding:12px 18px;border-top:1px solid rgba(67,86,111,.08);overflow-y:auto">
+              <sc-if value="{{ d.sel.hasTitle }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:10px;font-weight:800;letter-spacing:.08em;color:#8FA3B5;text-transform:uppercase;margin-bottom:4px">Intent</div>
+                <div style="font-size:13px;font-weight:700;line-height:1.45;color:#43566F;margin-bottom:9px">{{ d.sel.title }}</div>
+              </sc-if>
+              <div style="font-size:10px;font-weight:800;letter-spacing:.08em;color:#8FA3B5;text-transform:uppercase;margin-bottom:4px">Caption</div>
+              <div style="font-size:12.5px;line-height:1.55;color:#3E576E">{{ d.sel.caption }}</div>
+              <div style="font-size:10px;font-weight:800;letter-spacing:.08em;color:#8FA3B5;text-transform:uppercase;margin:10px 0 4px">Citable sources</div>
+              <div style="font-size:12px;line-height:1.55;color:{{ d.sel.sourcesFg }};font-style:{{ d.sel.sourcesStyle }}">{{ d.sel.sources }}</div>
+              <sc-if value="{{ d.sel.hasNotes }}" hint-placeholder-val="{{ false }}">
+                <div style="margin-top:8px;font-size:11.5px;line-height:1.5;color:#8a5a12;background:#FFF7EC;border:1px solid #F3DFC0;border-radius:6px;padding:7px 10px">{{ d.sel.notes }}</div>
+              </sc-if>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;background:#FAFCFE;min-height:0">
+            <div style="padding:13px 44px 13px 16px;display:flex;flex-direction:column;gap:9px;border-bottom:1px solid rgba(67,86,111,.08)">
+              <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:#8FA3B5;font-weight:600">Contact</span><span style="font-weight:700;color:{{ d.sel.contactFg }}">{{ d.sel.contactLabel }}</span></div>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px">
+              <div style="font-size:10px;font-weight:800;letter-spacing:.08em;color:#8FA3B5;text-transform:uppercase">Feedback ({{ d.sel.cCount }})</div>
+              <sc-for list="{{ d.sel.comments }}" as="cm" hint-placeholder-count="0">
+                <div style="background:#fff;border:1px solid rgba(67,86,111,.1);border-radius:7px;padding:8px 10px">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;font-weight:700;color:#3E576E">{{ cm.who }}</span><span style="font-size:10px;color:#A7B6C4">{{ cm.when }}</span></div>
+                  <div style="font-size:11.5px;line-height:1.5;color:#3E576E">{{ cm.text }}</div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ d.sel.noComments }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:11.5px;color:#A7B6C4;font-style:italic">No feedback yet — be the first.</div>
+              </sc-if>
+            </div>
+            <div style="padding:10px 16px 14px;border-top:1px solid rgba(67,86,111,.08);display:flex;flex-direction:column;gap:6px">
+              <textarea value="{{ d.sel.draft }}" onChange="{{ d.sel.draftOn }}" placeholder="Feedback for the next iteration…" rows="3" style="font-family:inherit;font-size:11.5px;padding:7px 9px;border:1px solid rgba(67,86,111,.18);border-radius:6px;color:#43566F;resize:none;outline-color:#3E576E"></textarea>
+              <div style="display:flex;gap:6px;align-items:center">
+                <input value="{{ who }}" onChange="{{ whoOn }}" placeholder="Your name" style="flex:1;min-width:0;font-family:inherit;font-size:11.5px;font-weight:600;padding:7px 9px;border:1px solid {{ whoBd }};border-radius:6px;color:#43566F;outline-color:#3E576E">
+                <button onClick="{{ d.sel.addOn }}" style="font-family:inherit;font-weight:700;font-size:12px;padding:7px 16px;border:none;border-radius:6px;background:#3E576E;color:#fff;cursor:pointer" style-hover="background:#E86B00">{{ sendLabel }}</button>
+              </div>
+              <div style="font-size:10px;color:{{ whoCol }};min-height:12px">{{ whoMsg }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;requirePassphrase&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Access&quot;},
+  &quot;gridColumns&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [3, 4, 5], &quot;default&quot;: 4, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Layout&quot;},
+  &quot;web3formsKey&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;4eb5b972-4e0a-47be-95fb-ca527f57c60b&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Feedback&quot;}
+}">
+class Component extends DCLogic {
+  state = {
+    ready: false,
+    ch: 0, sel: null, ver: {},
+    who: '', drafts: {}, comments: {}, statuses: {}, extra: {}, extraFigs: [],
+    unlocked: false, gateVal: '', gateMsg: ''
+  };
+
+  componentDidMount() {
+    const tryLoad = () => {
+      if (window.MEDECC_FIGURES) {
+        let statuses = {}, who = '', unlocked = false;
+        try {
+          // comments are NOT read back from localStorage — comments.csv is the single
+          // source of truth on reload; local state below is just an optimistic, in-session cache
+          statuses = JSON.parse(localStorage.getItem('medeccFigStatuses') || '{}');
+          who = localStorage.getItem('medeccFigWho') || '';
+          unlocked = localStorage.getItem('medeccGateOk') === '1';
+        } catch (e) {}
+        this.setState({ ready: true, statuses, who, unlocked });
+        this.probeVersions();
+        this.loadSheet();
+        this.loadComments();
+      } else setTimeout(tryLoad, 120);
+    };
+    tryLoad();
+  }
+
+  // ---- automatic version discovery: probe for _v1, _v2, ... files ----
+  probeVersions() {
+    (window.MEDECC_FIGURES || []).forEach(f => {
+      const maxV = f.versions.length ? f.versions[f.versions.length - 1].v : -1;
+      this.probeNext(f, maxV + 1);
+    });
+    this.probeNewFigures();
+  }
+  // ---- discover brand-new figures not yet in the manifest (e.g. SPM) ----
+  probeNewFigures() {
+    [1, 2, 3, 4, 5, 6, 7, 'SPM'].forEach(ch => {
+      // only numbered figures can be guessed; named ones come from the manifest or Figures.xlsx
+      const nums = (window.MEDECC_FIGURES || []).filter(f => f.chapter === ch && typeof f.figure === 'number').map(f => f.figure);
+      this.probeNewFig(ch, nums.length ? Math.max.apply(null, nums) + 1 : 1);
+    });
+  }
+  probeNewFig(ch, num) {
+    if (num > 30) return;
+    const exts = ['png', 'jpeg', 'jpg'];
+    const base = 'figures/Ch_' + ch + '_Figure_' + num + '_v0.';
+    const tryExt = (i) => {
+      if (i >= exts.length) return;
+      const img = new Image();
+      img.onload = () => {
+        const rec = {
+          id: 'ch' + ch + '-fig' + num, chapter: ch, figure: num, variant: '',
+          label: 'Fig. ' + ch + '.' + num,
+          title: '', caption: '', notes: '', contact: '', date: '',
+          versions: [{ v: 0, file: base + exts[i] }]
+        };
+        this.setState({ extraFigs: [...this.state.extraFigs, rec] });
+        this.probeNext(rec, 1);
+        this.probeNewFig(ch, num + 1);
+      };
+      img.onerror = () => tryExt(i + 1);
+      img.src = base + exts[i];
+    };
+    tryExt(0);
+  }
+  probeNext(f, v) {
+    if (v > 12) return;
+    const exts = ['png', 'jpeg', 'jpg'];
+    const base = 'figures/Ch_' + f.chapter + '_Figure_' + f.figure + (f.variant || '') + '_v' + v + '.';
+    const tryExt = (i) => {
+      if (i >= exts.length) return;
+      const img = new Image();
+      img.onload = () => {
+        const extra = { ...this.state.extra };
+        extra[f.id] = [...(extra[f.id] || []), { v, file: base + exts[i] }];
+        this.setState({ extra });
+        this.probeNext(f, v + 1);
+      };
+      img.onerror = () => tryExt(i + 1);
+      img.src = base + exts[i];
+    };
+    tryExt(0);
+  }
+
+  // ---- master spreadsheet: Figures.xlsx (repo root) is the source of truth for all text ----
+  loadSheet() {
+    fetch('Figures.xlsx', { cache: 'no-store' })
+      .then(r => { if (!r.ok) throw 0; return r.arrayBuffer(); })
+      .then(buf => {
+        const parse = () => {
+          if (!window.XLSX) { setTimeout(parse, 150); return; }
+          try {
+            const wb = window.XLSX.read(buf, { type: 'array' });
+            const rows = window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: false, defval: '' });
+            if (!rows.length) return;
+            const head = rows[0].map(h => String(h).trim().toLowerCase());
+            const col = (names) => { for (const n of names) { const i = head.indexOf(n); if (i !== -1) return i; } return -1; };
+            const ix = {
+              ch: col(['chapter']), fig: col(['figure']),
+              title: col(['intent', 'title', 'intent (formerly title)']),
+              cap: col(['caption']), notes: col(['notes']),
+              contact: col(['contact']), date: col(['date']),
+              sources: col(['sources', 'citable sources', 'source'])
+            };
+            if (ix.ch === -1 || ix.fig === -1) return;
+            const sheet = {};
+            rows.slice(1).forEach(r => {
+              const chRaw = String(r[ix.ch] || '').trim();
+              const figRaw = String(r[ix.fig] || '').trim();
+              if (!chRaw || !figRaw) return;
+              const ch = /spm/i.test(chRaw) ? 'SPM' : parseInt(chRaw, 10);
+              const m = figRaw.match(/^(\d+)\s*([a-z]?)$/i);
+              const named = !m && /^[a-z][a-z0-9-]*$/i.test(figRaw);   // e.g. CRD, not yet numbered
+              if (!m && !named) return;
+              const num = m ? parseInt(m[1], 10) : figRaw;
+              const variant = m && m[2] ? m[2].toLowerCase() : '';
+              const get = (i) => i === -1 ? undefined : String(r[i] || '').trim();
+              sheet['ch' + ch + '-fig' + String(num).toLowerCase() + variant] = {
+                chapter: ch, figure: num, variant,
+                label: 'Fig. ' + (ch === 'SPM' ? 'SPM.' : ch + '.') + num + variant,
+                title: get(ix.title), caption: get(ix.cap), notes: get(ix.notes),
+                contact: get(ix.contact), date: get(ix.date), sources: get(ix.sources)
+              };
+            });
+            this.setState({ sheet, sheetOk: true });
+            // rows with no image in the manifest yet: look for their _v0, _v1, ... files
+            const known = new Set((window.MEDECC_FIGURES || []).map(f => f.id));
+            Object.keys(sheet).filter(id => !known.has(id)).forEach(id => this.probeNext({ id, ...sheet[id] }, 0));
+          } catch (e) { /* keep figures-data.js fallback */ }
+        };
+        parse();
+      }).catch(() => {});
+  }
+
+  // ---- shared comments: exported CSV from the form service, dropped in the repo root ----
+  loadComments() {
+    fetch('comments.csv', { cache: 'no-store' })
+      .then(r => { if (!r.ok) throw 0; return r.text(); })
+      .then(txt => {
+        const rows = this.parseCSV(txt);
+        if (rows.length < 2) return;
+        const head = rows[0].map(h => h.trim().toLowerCase());
+        const ix = {
+          when: head.indexOf('submitted at'),
+          who: head.indexOf('name'),
+          text: head.indexOf('comment'),
+          fig: head.indexOf('figure')
+        };
+        if (ix.who === -1 || ix.text === -1 || ix.fig === -1) return;
+        const shared = {};
+        rows.slice(1).forEach(r => {
+          const label = (r[ix.fig] || '').trim();
+          const text = (r[ix.text] || '').trim();
+          if (!label || !text) return;
+          const d = ix.when !== -1 ? new Date(r[ix.when]) : null;
+          const ok = d && !isNaN(d.getTime());
+          (shared[label] = shared[label] || []).push({
+            who: (r[ix.who] || '').trim() || 'Anonymous', text,
+            when: ok ? d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }) : '',
+            ts: ok ? d.getTime() : 0
+          });
+        });
+        Object.values(shared).forEach(a => a.sort((x, y) => x.ts - y.ts));
+        this.setState({ sharedComments: shared });
+      }).catch(() => {});
+  }
+
+  parseCSV(txt) {
+    const rows = []; let row = [], cur = '', q = false;
+    for (let i = 0; i < txt.length; i++) {
+      const c = txt[i];
+      if (q) { if (c === '"') { if (txt[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += c; }
+      else if (c === '"') q = true;
+      else if (c === ',') { row.push(cur); cur = ''; }
+      else if (c === '\n' || c === '\r') {
+        if (c === '\r' && txt[i + 1] === '\n') i++;
+        row.push(cur); if (row.length > 1 || row[0] !== '') rows.push(row);
+        row = []; cur = '';
+      } else cur += c;
+    }
+    if (cur !== '' || row.length) { row.push(cur); rows.push(row); }
+    return rows;
+  }
+
+  applySheet(f) {
+    const row = (this.state.sheet || {})[f.id];
+    if (!row) return f;
+    const pick = (v, old) => v !== undefined ? v : old;
+    return {
+      ...f,
+      title: pick(row.title, f.title), caption: pick(row.caption, f.caption),
+      notes: pick(row.notes, f.notes), contact: pick(row.contact, f.contact),
+      date: pick(row.date, f.date), sources: pick(row.sources, f.sources)
+    };
+  }
+
+  persist(key, val) { try { localStorage.setItem(key, typeof val === 'string' ? val : JSON.stringify(val)); } catch (e) {} }
+
+  addComment(figId, label) {
+    const text = (this.state.drafts[figId] || '').trim();
+    if (!text) return;
+    const who = (this.state.who || '').trim();
+    if (!who) { this.setState({ whoMsg: 'Please add your name so the feedback is name-stamped.', whoCol: '#B3261E' }); return; }
+    if (this.state.sending) return;
+    // Web3Forms access key — public key, safe for client-side code (get/rotate at https://web3forms.com)
+    const accessKey = this.props.web3formsKey ?? '4eb5b972-4e0a-47be-95fb-ca527f57c60b';
+    this.setState({ sending: true, whoMsg: '', whoCol: '#B3261E' });
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ access_key: accessKey, subject: label, name: who, figure: label, comment: text })
+    }).then(r => r.json()).then(j => {
+      if (!(j.success === true || j.success === 'true')) { const e = new Error(j.message || 'send failed'); e.fromService = true; throw e; }
+      const when = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+      const comments = { ...this.state.comments };
+      comments[figId] = [...(comments[figId] || []), { who, text, when }];
+      this.setState({ comments, drafts: { ...this.state.drafts, [figId]: '' }, sending: false, whoMsg: '✓ Sent by email to the coordinator.', whoCol: '#23A455' });
+    }).catch((err) => {
+      const detail = (err && err.fromService && err.message) ? ' (' + err.message + ')' : '';
+      this.setState({ sending: false, whoMsg: 'Could not send' + detail + ' — please email the coordinator directly. Your text is kept above.', whoCol: '#B3261E' });
+    });
+  }
+
+  allVersions(f) {
+    return f.versions.concat(this.state.extra[f.id] || []).sort((a, b) => a.v - b.v);
+  }
+
+  decorate(f) {
+    const s = this.state;
+    const local = s.comments[f.id] || [];
+    const shared = (s.sharedComments || {})[f.label] || [];
+    const seen = new Set(shared.map(c => c.who + '|' + c.text));
+    const comments = shared.concat(local.filter(c => !seen.has(c.who + '|' + c.text)));
+    const versions = this.allVersions(f);
+    const latest = versions[versions.length - 1];
+    const vi = s.ver[f.id] != null ? Math.min(s.ver[f.id], versions.length - 1) : versions.length - 1;
+    const cur = versions[vi];
+    const hasImg = !!cur;
+    const stSel = s.statuses[f.id] || 'In review';
+    const status = hasImg ? ('v' + latest.v + ' · ' + stSel.toLowerCase()) : 'file missing';
+    const stMap = {
+      'In review': ['#EAF1FB', '#3E576E'],
+      'Feedback received': ['#FFF3E8', '#C2570F'],
+      'Revising': ['#FDF6DC', '#8a6d0b'],
+      'Final': ['#E5F4EA', '#23A455']
+    };
+    const [stBg, stFg] = hasImg ? (stMap[stSel] || stMap['In review']) : ['#FDECEC', '#B3261E'];
+    const thumbOf = (file) => 'thumbs/' + file.split('/').pop().replace(/\.\w+$/, '') + '.jpg';
+    return {
+      ...f,
+      hasImg, noImg: !hasImg,
+      img: cur ? cur.file : '',
+      imgEl: (hasImg && cur.file) ? React.createElement('img', {
+        src: cur.file, alt: f.label,
+        style: { maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', background: '#fff', border: '1px solid rgba(67,86,111,.08)' }
+      }) : null,
+      thumb: latest ? thumbOf(latest.file) : '',
+      thumbErr: (e) => {
+        // no thumbnail yet (fresh version) -> fall back to the full-res file
+        if (latest && e.target.src.indexOf('thumbs/') !== -1) e.target.src = latest.file;
+      },
+      isNew: !!latest && latest.v > 0,
+      latestLabel: latest ? 'v' + latest.v : '',
+      status, stBg, stFg,
+      statusShort: hasImg ? stSel.toLowerCase() : 'file missing',
+      chLabel: 'Chapter ' + f.chapter,
+      title: f.title || '',
+      hasTitle: !!f.title,
+      capShort: f.title || f.caption || '(caption to be added)',
+      caption: f.caption || '(caption to be added)',
+      hasNotes: !!f.notes, notes: f.notes,
+      sources: f.sources || '(to be added — fill the \u201CSources\u201D column in the master spreadsheet)',
+      sourcesFg: f.sources ? '#3E576E' : '#A7B6C4',
+      sourcesStyle: f.sources ? 'normal' : 'italic',
+      date: f.date || '—',
+      contactLabel: f.contact || 'TBC',
+      contactCard: 'Contact: ' + (f.contact || 'TBC'),
+      contactFg: f.contact ? '#43566F' : '#C2570F',
+      cCount: comments.length,
+      cLabel: comments.length ? comments.length + ' 💬' : '',
+      comments, noComments: comments.length === 0,
+      draft: s.drafts[f.id] || '',
+      draftOn: (e) => this.setState({ drafts: { ...this.state.drafts, [f.id]: e.target.value } }),
+      addOn: () => this.addComment(f.id, f.label),
+      // download the version currently being viewed (the latest one by default)
+      dlEl: (hasImg && cur.file) ? React.createElement('a', {
+        href: cur.file,
+        download: cur.file.split('/').pop(),
+        title: 'Download ' + cur.file.split('/').pop(),
+        // ---- adjust download button colours/spacing here ----
+        style: {
+          display: 'inline-flex', alignItems: 'center', gap: '5px',
+          padding: '4px 10px', borderRadius: '6px', border: '1px solid rgba(67,86,111,.2)',
+          background: '#fff', color: '#43566F', font: 'inherit', fontSize: '11.5px',
+          fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap'
+        }
+      }, '\u2193 Download v' + cur.v) : null,
+      verChips: versions.map((v, i) => ({
+        label: 'v' + v.v,
+        bd: i === vi ? '#3E576E' : 'rgba(67,86,111,.2)',
+        bg: i === vi ? '#3E576E' : '#fff',
+        fg: i === vi ? '#fff' : '#43566F',
+        on: () => this.setState({ ver: { ...this.state.ver, [f.id]: i } })
+      }))
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const sheet = s.sheet || {};
+    const base = (window.MEDECC_FIGURES || []).concat(s.extraFigs);
+    const known = new Set(base.map(f => f.id));
+    const sheetOnly = Object.keys(sheet).filter(id => !known.has(id)).map(id => ({
+      id, ...sheet[id], versions: []
+    }));
+    const all = base.map(f => this.applySheet(f)).concat(sheetOnly).sort((a, b) => {
+      // chapters 1-6 first, then SPM; within a chapter, numbered figures before named ones
+      const ch = (f) => f.chapter === 'SPM' ? 7 : Number(f.chapter);
+      const num = (f) => typeof f.figure === 'number' ? f.figure : Infinity;
+      const name = (f) => typeof f.figure === 'number' ? '' : String(f.figure).toLowerCase();
+      return ch(a) - ch(b)
+        || num(a) - num(b)
+        || name(a).localeCompare(name(b))
+        || (a.variant || '').localeCompare(b.variant || '');
+    });
+    const chapters = [1, 2, 3, 4, 5, 6, 7, 'SPM'];
+    const requireGate = this.props.requirePassphrase ?? true;
+    const unlocked = s.unlocked || !requireGate;
+    const cols = this.props.gridColumns ?? 4;
+
+    const navItems = [{ ch: 0, label: 'All figures' }].concat(chapters.map(ch => ({ ch, label: ch === 'SPM' ? 'SPM' : 'Chapter ' + ch }))).map(n => {
+      const active = s.ch === n.ch;
+      return {
+        ...n,
+        count: n.ch === 0 ? all.length : all.filter(f => f.chapter === n.ch).length,
+        bg: active ? 'rgba(255,255,255,.14)' : 'transparent',
+        mark: active ? '#E86B00' : 'transparent',
+        fg: active ? '#fff' : '#c7d0ee',
+        on: () => this.setState({ ch: n.ch })
+      };
+    });
+
+    const list = all.filter(f => s.ch === 0 || f.chapter === s.ch);
+    const figs = list.map(f => ({ ...this.decorate(f), on: () => this.setState({ sel: f.id }) }));
+
+    const selIdx = list.findIndex(f => f.id === s.sel);
+    const selRaw = selIdx >= 0 ? list[selIdx] : null;
+
+    return {
+      gateShow: s.ready && !unlocked,
+      appShow: s.ready && unlocked,
+      gate: {
+        val: s.gateVal,
+        on: (e) => this.setState({ gateVal: e.target.value, gateMsg: '' }),
+        key: (e) => { if (e.key === 'Enter') this.tryGate(); },
+        go: () => this.tryGate(),
+        msg: s.gateMsg
+      },
+      meta: {
+        summary: all.length + ' figures · 7 chapters + SPM.'
+      },
+      heading: s.ch === 0 ? 'All figures' : (s.ch === 'SPM' ? 'SPM' : 'Chapter ' + s.ch),
+      headingSub: list.length + (list.length === 1 ? ' figure' : ' figures'),
+      listEmpty: list.length === 0,
+      cols,
+      who: s.who,
+      whoOn: (e) => { this.setState({ who: e.target.value, whoMsg: '' }); this.persist('medeccFigWho', e.target.value); },
+      whoBd: (s.whoMsg && s.whoCol === '#B3261E') ? '#B3261E' : 'rgba(67,86,111,.18)',
+      whoMsg: s.whoMsg || '',
+      whoCol: s.whoCol || '#B3261E',
+      sendLabel: s.sending ? 'Sending…' : 'Send feedback',
+      navItems,
+      figs,
+      dOpen: !!selRaw,
+      d: {
+        sel: selRaw ? this.decorate(selRaw) : {},
+        close: () => this.setState({ sel: null }),
+        stop: (e) => e.stopPropagation(),
+        prev: () => { if (list.length) this.setState({ sel: list[(selIdx - 1 + list.length) % list.length].id }); },
+        next: () => { if (list.length) this.setState({ sel: list[(selIdx + 1) % list.length].id }); }
+      }
+    };
+  }
+
+
+  tryGate() {
+    if (this.state.gateVal.trim().toLowerCase() === 'mar2') {   // ---- shared passphrase ----
+      this.setState({ unlocked: true });
+      this.persist('medeccGateOk', '1');
+    } else {
+      this.setState({ gateMsg: 'That passphrase is not right — check the invite email.' });
+    }
+  }
+}
+</script>
+</body>
+</html>
