@@ -38,16 +38,16 @@ Chapter is 1-7 or SPM. Names must start with a letter and use only letters, digi
 hyphens (no underscores or spaces). PNG, JPG and JPEG all work.
 
 Then run `python3 scripts/update_figures.py` and commit + push. The script:
-- regenerates `figures-data.js` (keeping all titles/captions/contacts you've filled in),
+- regenerates `figures-data.js` (keeping the notes and contacts you've filled in),
 - creates the missing thumbnails in `thumbs/`.
 
 Needs Pillow for thumbnails: `pip install Pillow`.
 
 ## Editing the figure text
 
-`Figures.xlsx` in the repo root is the source of truth for all figure text. Each row is one
-figure, matched by its Chapter and Figure columns. Edit it, commit and push — no need to
-re-run the script for text-only changes.
+`Figures.xlsx` in the repo root is the source of truth for the figure text. Each row is one
+figure, matched by its Chapter and Figure columns, and carries Notes, Contact and Date.
+Edit it, commit and push — no need to re-run the script for text-only changes.
 
 `figures-data.js` holds the same fields as a fallback when the spreadsheet cannot be read.
 

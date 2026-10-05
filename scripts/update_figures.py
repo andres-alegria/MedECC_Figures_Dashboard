@@ -7,9 +7,9 @@ or manually:  python3 scripts/update_figures.py
 - Scans figures/ for files named  Ch_<chapter>_Figure_<id>_v<version>.(png|jpg|jpeg)
   (<chapter> is 1-7 or SPM; <id> is a number with optional letter, e.g. 3 or 4a,
   or a text name starting with a letter, e.g. CRD, for figures not yet numbered)
-- Merges them into figures-data.js, PRESERVING existing titles, captions,
-  notes and contacts. New figures get empty metadata you can fill in by
-  editing figures-data.js.
+- Merges them into figures-data.js, PRESERVING the notes and contacts already
+  recorded. New figures get empty metadata you can fill in by editing
+  figures-data.js or Figures.xlsx.
 - Generates a small JPEG thumbnail in thumbs/ for any figure file that
   doesn't have one yet (needs Pillow: pip install Pillow).
 """
@@ -56,7 +56,7 @@ def main():
             records[fid] = {
                 'id': fid, 'chapter': info['ch'], 'figure': info['num'], 'variant': info['var'],
                 'label': 'Fig. {}.{}{}'.format(info['ch'], info['num'], info['var']),
-                'title': '', 'caption': '', 'notes': '', 'contact': '', 'date': '',
+                'notes': '', 'contact': '', 'date': '',
                 'versions': versions,
             }
 

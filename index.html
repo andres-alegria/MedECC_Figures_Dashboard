@@ -65,7 +65,7 @@ a{color:#3E576E}a:hover{color:#E86B00}
     </div>
     <div style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat({{ cols }},1fr);gap:15px;align-content:start">
       <sc-for list="{{ figs }}" as="f" hint-placeholder-count="0">
-        <div onClick="{{ f.on }}" style="background:#fff;border:1px solid rgba(67,86,111,.12);border-radius:9px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;min-height:272px" style-hover="border:1px solid #3E576E;box-shadow:0 3px 10px rgba(32,56,168,.16)">
+        <div onClick="{{ f.on }}" style="background:#fff;border:1px solid rgba(67,86,111,.12);border-radius:9px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;min-height:238px" style-hover="border:1px solid #3E576E;box-shadow:0 3px 10px rgba(32,56,168,.16)">
           <div style="height:195px;min-height:195px;flex:none;background:#fff;border-bottom:1px solid rgba(67,86,111,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px;position:relative">
             <sc-if value="{{ f.hasImg }}" hint-placeholder-val="{{ false }}">
               <img src="{{ f.thumb }}" onError="{{ f.thumbErr }}" loading="lazy" alt="{{ f.label }}" style="max-width:100%;max-height:100%;object-fit:contain">
@@ -82,7 +82,6 @@ a{color:#3E576E}a:hover{color:#E86B00}
               <span style="font-weight:800;font-size:13.5px;color:#43566F">{{ f.label }}</span>
               <span style="margin-left:auto;font-size:10.5px;color:#7C8DA0;font-weight:700">{{ f.cLabel }}</span>
             </div>
-            <div style="font-size:11px;line-height:1.45;color:#4a5680;height:32px;overflow:hidden">{{ f.capShort }}</div>
           </div>
         </div>
       </sc-for>
@@ -108,21 +107,13 @@ a{color:#3E576E}a:hover{color:#E86B00}
                 {{ d.sel.dlEl }}
               </div>
             </div>
-            <div style="flex:1 1 240px;min-height:120px;max-height:420px;display:flex;align-items:center;justify-content:center;background:#F7FAFD;padding:16px;overflow:hidden">
+            <div style="flex:1 1 auto;min-height:160px;display:flex;align-items:center;justify-content:center;background:#F7FAFD;padding:16px;overflow:hidden">
               {{ d.sel.imgEl }}
               <sc-if value="{{ d.sel.noImg }}" hint-placeholder-val="{{ false }}">
-                <div style="border:2px dashed rgba(179,38,30,.4);border-radius:10px;padding:38px 56px;text-align:center;color:#B3261E;font-weight:700;font-size:14px">No file uploaded yet<br><span style="font-weight:400;font-size:12px;color:#8a4a46">caption exists in the spreadsheet</span></div>
+                <div style="border:2px dashed rgba(179,38,30,.4);border-radius:10px;padding:38px 56px;text-align:center;color:#B3261E;font-weight:700;font-size:14px">No file uploaded yet</div>
               </sc-if>
             </div>
-            <div style="flex:1;padding:12px 18px;border-top:1px solid rgba(67,86,111,.08);overflow-y:auto">
-              <sc-if value="{{ d.sel.hasTitle }}" hint-placeholder-val="{{ false }}">
-                <div style="font-size:10px;font-weight:800;letter-spacing:.08em;color:#8FA3B5;text-transform:uppercase;margin-bottom:4px">Intent</div>
-                <div style="font-size:13px;font-weight:700;line-height:1.45;color:#43566F;margin-bottom:9px">{{ d.sel.title }}</div>
-              </sc-if>
-              <div style="font-size:10px;font-weight:800;letter-spacing:.08em;color:#8FA3B5;text-transform:uppercase;margin-bottom:4px">Caption</div>
-              <div style="font-size:12.5px;line-height:1.55;color:#3E576E">{{ d.sel.caption }}</div>
-              <div style="font-size:10px;font-weight:800;letter-spacing:.08em;color:#8FA3B5;text-transform:uppercase;margin:10px 0 4px">Citable sources</div>
-              <div style="font-size:12px;line-height:1.55;color:{{ d.sel.sourcesFg }};font-style:{{ d.sel.sourcesStyle }}">{{ d.sel.sources }}</div>
+            <div style="padding:12px 18px;border-top:1px solid rgba(67,86,111,.08);overflow-y:auto">
               <sc-if value="{{ d.sel.hasNotes }}" hint-placeholder-val="{{ false }}">
                 <div style="margin-top:8px;font-size:11.5px;line-height:1.5;color:#8a5a12;background:#FFF7EC;border:1px solid #F3DFC0;border-radius:6px;padding:7px 10px">{{ d.sel.notes }}</div>
               </sc-if>
@@ -221,7 +212,7 @@ class Component extends DCLogic {
         const rec = {
           id: 'ch' + ch + '-fig' + num, chapter: ch, figure: num, variant: '',
           label: 'Fig. ' + ch + '.' + num,
-          title: '', caption: '', notes: '', contact: '', date: '',
+          notes: '', contact: '', date: '',
           versions: [{ v: 0, file: base + exts[i] }]
         };
         this.setState({ extraFigs: [...this.state.extraFigs, rec] });
@@ -267,10 +258,8 @@ class Component extends DCLogic {
             const col = (names) => { for (const n of names) { const i = head.indexOf(n); if (i !== -1) return i; } return -1; };
             const ix = {
               ch: col(['chapter']), fig: col(['figure']),
-              title: col(['intent', 'title', 'intent (formerly title)']),
-              cap: col(['caption']), notes: col(['notes']),
+              notes: col(['notes']),
               contact: col(['contact']), date: col(['date']),
-              sources: col(['sources', 'citable sources', 'source'])
             };
             if (ix.ch === -1 || ix.fig === -1) return;
             const sheet = {};
@@ -288,8 +277,7 @@ class Component extends DCLogic {
               sheet['ch' + ch + '-fig' + String(num).toLowerCase() + variant] = {
                 chapter: ch, figure: num, variant,
                 label: 'Fig. ' + (ch === 'SPM' ? 'SPM.' : ch + '.') + num + variant,
-                title: get(ix.title), caption: get(ix.cap), notes: get(ix.notes),
-                contact: get(ix.contact), date: get(ix.date), sources: get(ix.sources)
+                notes: get(ix.notes), contact: get(ix.contact), date: get(ix.date)
               };
             });
             this.setState({ sheet, sheetOk: true });
@@ -358,9 +346,8 @@ class Component extends DCLogic {
     const pick = (v, old) => v !== undefined ? v : old;
     return {
       ...f,
-      title: pick(row.title, f.title), caption: pick(row.caption, f.caption),
       notes: pick(row.notes, f.notes), contact: pick(row.contact, f.contact),
-      date: pick(row.date, f.date), sources: pick(row.sources, f.sources)
+      date: pick(row.date, f.date)
     };
   }
 
@@ -434,14 +421,7 @@ class Component extends DCLogic {
       status, stBg, stFg,
       statusShort: hasImg ? stSel.toLowerCase() : 'file missing',
       chLabel: 'Chapter ' + f.chapter,
-      title: f.title || '',
-      hasTitle: !!f.title,
-      capShort: f.title || f.caption || '(caption to be added)',
-      caption: f.caption || '(caption to be added)',
       hasNotes: !!f.notes, notes: f.notes,
-      sources: f.sources || '(to be added — fill the \u201CSources\u201D column in the master spreadsheet)',
-      sourcesFg: f.sources ? '#3E576E' : '#A7B6C4',
-      sourcesStyle: f.sources ? 'normal' : 'italic',
       date: f.date || '—',
       contactLabel: f.contact || 'TBC',
       contactCard: 'Contact: ' + (f.contact || 'TBC'),
