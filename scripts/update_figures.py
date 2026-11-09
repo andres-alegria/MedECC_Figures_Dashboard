@@ -7,11 +7,16 @@ or manually:  python3 scripts/update_figures.py
 - Scans figures/ for files named  Ch_<chapter>_Figure_<id>_v<version>.(png|jpg|jpeg)
   (<chapter> is 1-7 or SPM; <id> is a number with optional letter, e.g. 3 or 4a,
   or a text name starting with a letter, e.g. CRD, for figures not yet numbered)
-- Merges them into figures-data.js, PRESERVING the notes and contacts already
-  recorded. New figures get empty metadata you can fill in by editing
-  figures-data.js or Figures.xlsx.
+- Merges them into figures-data.js, PRESERVING existing titles, captions,
+  notes and contacts. New figures get empty metadata you can fill in by
+  editing figures-data.js or Figures.xlsx, and a figure whose files have all
+  been deleted is dropped from figures-data.js (delete its row in
+  Figures.xlsx too, or the dashboard will keep showing it as a figure with
+  no file).
 - Generates a small JPEG thumbnail in thumbs/ for any figure file that
-  doesn't have one yet (needs Pillow: pip install Pillow).
+  doesn't have one yet, and rebuilds any thumbnail that is older than its
+  figure file - so replacing a figure in place without bumping the version
+  still refreshes the preview (needs Pillow: pip install Pillow).
 """
 import json, os, re, sys
 
@@ -46,7 +51,16 @@ def main():
             num, var = m.group(4), ''   # named figure, e.g. CRD
         fid = 'ch{}-fig{}{}'.format(ch, str(num).lower(), var)
         found.setdefault(fid, {'ch': ch, 'num': num, 'var': var, 'versions': []})
-        found[fid]['versions'].append({'v': ver, 'file': 'figures/' + name})
+        # mtime lets the dashboard mark only the most recently updated figures as new
+        mtime = int(os.path.getmtime(os.path.join(FIG_DIR, name)))
+        found[fid]['versions'].append({'v': ver, 'file': 'figures/' + name, 'mtime': mtime})
+
+    # a figure with no surviving file is gone: drop it rather than leaving a
+    # dead entry that the dashboard renders as "no file uploaded yet"
+    dropped = [fid for fid in records if fid not in found]
+    for fid in dropped:
+        print('dropped (no files left): {}  {}'.format(fid, records[fid].get('label', '')))
+        del records[fid]
 
     for fid, info in found.items():
         versions = sorted(info['versions'], key=lambda v: v['v'])
@@ -56,7 +70,7 @@ def main():
             records[fid] = {
                 'id': fid, 'chapter': info['ch'], 'figure': info['num'], 'variant': info['var'],
                 'label': 'Fig. {}.{}{}'.format(info['ch'], info['num'], info['var']),
-                'notes': '', 'contact': '', 'date': '',
+                'title': '', 'caption': '', 'notes': '', 'contact': '', 'date': '',
                 'versions': versions,
             }
 
@@ -76,19 +90,27 @@ def main():
         print('Pillow not installed - skipping thumbnails (pip install Pillow)')
         return
     os.makedirs(THUMB_DIR, exist_ok=True)
-    made = 0
+    made = stale = 0
     for rec in ordered:
         for v in rec['versions']:
             src = os.path.join(ROOT, v['file'])
             base = os.path.splitext(os.path.basename(v['file']))[0]
             dst = os.path.join(THUMB_DIR, base + '.jpg')
-            if os.path.exists(dst) or not os.path.exists(src):
+            if not os.path.exists(src):
                 continue
+            if os.path.exists(dst):
+                # a figure replaced in place keeps its version number, so compare
+                # timestamps instead of trusting that an existing thumb is current
+                if os.path.getmtime(dst) >= os.path.getmtime(src):
+                    continue
+                stale += 1
+            else:
+                made += 1
             img = Image.open(src).convert('RGB')
+            # ---- adjust thumbnail size / JPEG quality here ----
             img.thumbnail((560, 560))
             img.save(dst, 'JPEG', quality=72)
-            made += 1
-    print('thumbnails generated: {}'.format(made))
+    print('thumbnails: {} new, {} refreshed (figure file was newer)'.format(made, stale))
 
 if __name__ == '__main__':
     sys.exit(main())

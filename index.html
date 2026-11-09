@@ -86,9 +86,9 @@ a:hover{color:#252061}
     <div style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat({{ cols }},1fr);gap:16px;align-content:start">
       <sc-for list="{{ figs }}" as="f" hint-placeholder-count="0">
         <div onClick="{{ f.on }}" style="background:#fff;border:1px solid #C9D2E6;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;min-height:238px" style-hover="border:1px solid #2C4B8F">
-          <div style="height:195px;min-height:195px;flex:none;background:#fff;border-bottom:1px solid #C9D2E6;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px;position:relative">
+          <div style="height:195px;min-height:195px;flex:none;background:#fff;border-bottom:1px solid #C9D2E6;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;padding:0;position:relative">
             <sc-if value="{{ f.hasImg }}" hint-placeholder-val="{{ false }}">
-              <img src="{{ f.thumb }}" onError="{{ f.thumbErr }}" loading="lazy" alt="{{ f.label }}" style="max-width:100%;max-height:100%;object-fit:contain">
+              <img src="{{ f.thumb }}" onError="{{ f.thumbErr }}" loading="lazy" alt="{{ f.label }}" style="width:100%;height:auto;align-self:flex-start">
             </sc-if>
             <sc-if value="{{ f.noImg }}" hint-placeholder-val="{{ false }}">
               <div style="font-size:11px;font-weight:600;letter-spacing:.04em;color:#B3402B">no file yet</div>
@@ -102,6 +102,9 @@ a:hover{color:#252061}
               <span style="font-weight:700;font-size:13px;color:#2C4B8F">{{ f.label }}</span>
               <span style="margin-left:auto;font-size:10.5px;color:#6F86B5;font-weight:600">{{ f.cLabel }}</span>
             </div>
+            <sc-if value="{{ f.hasCap }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:11px;line-height:1.45;color:#6F86B5;height:32px;overflow:hidden">{{ f.capShort }}</div>
+            </sc-if>
           </div>
         </div>
       </sc-for>
@@ -135,6 +138,14 @@ a:hover{color:#252061}
               </sc-if>
             </div>
             <div style="padding:12px 18px;border-top:1px solid #C9D2E6;overflow-y:auto">
+              <sc-if value="{{ d.sel.hasTitle }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:#6F86B5;text-transform:uppercase;margin-bottom:4px">Intent</div>
+                <div style="font-size:13px;font-weight:700;line-height:1.45;color:#2C4B8F;margin-bottom:9px">{{ d.sel.title }}</div>
+              </sc-if>
+              <sc-if value="{{ d.sel.hasCaption }}" hint-placeholder-val="{{ false }}">
+                <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:#6F86B5;text-transform:uppercase;margin-bottom:4px">Caption</div>
+                <div style="font-size:12.5px;line-height:1.55;color:#2C4B8F">{{ d.sel.caption }}</div>
+              </sc-if>
               <sc-if value="{{ d.sel.hasNotes }}" hint-placeholder-val="{{ false }}">
                 <div style="margin-top:8px;font-size:11.5px;line-height:1.55;color:#2C4B8F;background:#F4F7FB;border:1px solid #C9D2E6;padding:8px 10px">{{ d.sel.notes }}</div>
               </sc-if>
@@ -233,7 +244,7 @@ class Component extends DCLogic {
         const rec = {
           id: 'ch' + ch + '-fig' + num, chapter: ch, figure: num, variant: '',
           label: 'Fig. ' + ch + '.' + num,
-          notes: '', contact: '', date: '',
+          title: '', caption: '', notes: '', contact: '', date: '',
           versions: [{ v: 0, file: base + exts[i] }]
         };
         this.setState({ extraFigs: [...this.state.extraFigs, rec] });
@@ -279,6 +290,7 @@ class Component extends DCLogic {
             const col = (names) => { for (const n of names) { const i = head.indexOf(n); if (i !== -1) return i; } return -1; };
             const ix = {
               ch: col(['chapter']), fig: col(['figure']),
+              title: col(['intent', 'title']), cap: col(['caption']),
               notes: col(['notes']),
               contact: col(['contact']), date: col(['date']),
             };
@@ -298,6 +310,7 @@ class Component extends DCLogic {
               sheet['ch' + ch + '-fig' + String(num).toLowerCase() + variant] = {
                 chapter: ch, figure: num, variant,
                 label: 'Fig. ' + (ch === 'SPM' ? 'SPM.' : ch + '.') + num + variant,
+                title: get(ix.title), caption: get(ix.cap),
                 notes: get(ix.notes), contact: get(ix.contact), date: get(ix.date)
               };
             });
@@ -367,6 +380,7 @@ class Component extends DCLogic {
     const pick = (v, old) => v !== undefined ? v : old;
     return {
       ...f,
+      title: pick(row.title, f.title), caption: pick(row.caption, f.caption),
       notes: pick(row.notes, f.notes), contact: pick(row.contact, f.contact),
       date: pick(row.date, f.date)
     };
@@ -437,8 +451,11 @@ class Component extends DCLogic {
         // no thumbnail yet (fresh version) -> fall back to the full-res file
         if (latest && e.target.src.indexOf('thumbs/') !== -1) e.target.src = latest.file;
       },
-      isNew: !!latest && latest.v > 0,
+      isNew: !!latest && !!this.newIds && this.newIds.has(f.id),
       latestLabel: latest ? 'v' + latest.v : '',
+      title: f.title || '', hasTitle: !!f.title,
+      caption: f.caption || '', hasCaption: !!f.caption,
+      capShort: f.title || f.caption || '', hasCap: !!(f.title || f.caption),
       status, stBg, stFg,
       statusShort: hasImg ? stSel.toLowerCase() : 'file missing',
       chLabel: 'Chapter ' + f.chapter,
@@ -494,15 +511,29 @@ class Component extends DCLogic {
         || name(a).localeCompare(name(b))
         || (a.variant || '').localeCompare(b.variant || '');
     });
+    // "NEW" badge goes to the most recently updated figures only
+    // ---- adjust how many figures carry the badge here ----
+    const NEW_BADGE_COUNT = 5;
+    const updatedAt = (f) => this.allVersions(f).reduce(
+      // a version found by probing has no mtime yet: treat it as just-added
+      (t, v) => Math.max(t, v.mtime == null ? Infinity : v.mtime), 0);
+    // Every figure in the first extraction carries the same timestamp, so "the
+    // five most recent" would be five picked at random out of a tie. A figure
+    // only counts as new once something has landed after that first batch.
+    const stamps = all.map(updatedAt).filter(t => t > 0);
+    const oldest = stamps.length ? Math.min.apply(null, stamps) : 0;
+    this.newIds = new Set(all.filter(f => updatedAt(f) > oldest)
+      .sort((a, b) => updatedAt(b) - updatedAt(a))
+      .slice(0, NEW_BADGE_COUNT).map(f => f.id));
+
     const chapters = [1, 2, 3, 4, 5, 6, 7, 'SPM'];
     const requireGate = this.props.requirePassphrase ?? true;
     const unlocked = s.unlocked || !requireGate;
     const cols = this.props.gridColumns ?? 4;
 
     // 'style' is not a chapter: it opens the figure style guide in place of the grid
-    const navItems = [{ ch: 0, label: 'All figures' }]
+    const navItems = [{ ch: 'style', label: 'Figure style' }, { ch: 0, label: 'All figures' }]
       .concat(chapters.map(ch => ({ ch, label: ch === 'SPM' ? 'SPM' : 'Chapter ' + ch })))
-      .concat([{ ch: 'style', label: 'Figure style' }])
       .map(n => {
       const active = s.ch === n.ch;
       return {

@@ -11,7 +11,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_1_Figure_2_v0.jpg"
+    "file": "figures/Ch_1_Figure_2_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -27,7 +28,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_1_Figure_3_v0.jpg"
+    "file": "figures/Ch_1_Figure_3_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -43,7 +45,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_2_Figure_1_v0.jpg"
+    "file": "figures/Ch_2_Figure_1_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -59,7 +62,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_2_Figure_2_v0.jpg"
+    "file": "figures/Ch_2_Figure_2_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -75,7 +79,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_2_Figure_3_v0.jpg"
+    "file": "figures/Ch_2_Figure_3_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -91,7 +96,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_2_Figure_4_v0.jpg"
+    "file": "figures/Ch_2_Figure_4_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -107,7 +113,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_2_Figure_5_v0.jpg"
+    "file": "figures/Ch_2_Figure_5_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -123,7 +130,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_1_v0.jpg"
+    "file": "figures/Ch_3_Figure_1_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -139,7 +147,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_2_v0.jpg"
+    "file": "figures/Ch_3_Figure_2_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -155,7 +164,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_3_v0.jpg"
+    "file": "figures/Ch_3_Figure_3_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -171,7 +181,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_4_v0.jpg"
+    "file": "figures/Ch_3_Figure_4_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -187,7 +198,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_5_v0.jpg"
+    "file": "figures/Ch_3_Figure_5_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -203,7 +215,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_6_v0.jpg"
+    "file": "figures/Ch_3_Figure_6_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -219,7 +232,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_7_v0.jpg"
+    "file": "figures/Ch_3_Figure_7_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -235,7 +249,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_8_v0.jpg"
+    "file": "figures/Ch_3_Figure_8_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -251,7 +266,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_9_v0.jpg"
+    "file": "figures/Ch_3_Figure_9_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -267,7 +283,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_10_v0.jpg"
+    "file": "figures/Ch_3_Figure_10_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -283,7 +300,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_11_v0.jpg"
+    "file": "figures/Ch_3_Figure_11_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -299,7 +317,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_3_Figure_12_v0.jpg"
+    "file": "figures/Ch_3_Figure_12_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -315,7 +334,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_5_Figure_1_v0.jpg"
+    "file": "figures/Ch_5_Figure_1_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -331,7 +351,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_5_Figure_2_v0.jpg"
+    "file": "figures/Ch_5_Figure_2_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -347,7 +368,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_5_Figure_3_v0.jpg"
+    "file": "figures/Ch_5_Figure_3_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -363,7 +385,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_5_Figure_4_v0.jpg"
+    "file": "figures/Ch_5_Figure_4_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -379,7 +402,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_5_Figure_5_v0.jpg"
+    "file": "figures/Ch_5_Figure_5_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -395,7 +419,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_5_Figure_6_v0.jpg"
+    "file": "figures/Ch_5_Figure_6_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -411,7 +436,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_5_Figure_7_v0.jpg"
+    "file": "figures/Ch_5_Figure_7_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -427,7 +453,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_5_Figure_8_v0.jpg"
+    "file": "figures/Ch_5_Figure_8_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -443,7 +470,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_5_Figure_9_v0.jpg"
+    "file": "figures/Ch_5_Figure_9_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -459,7 +487,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_5_Figure_10_v0.jpg"
+    "file": "figures/Ch_5_Figure_10_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -475,7 +504,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_6_Figure_1_v0.jpg"
+    "file": "figures/Ch_6_Figure_1_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -491,7 +521,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_6_Figure_2_v0.jpg"
+    "file": "figures/Ch_6_Figure_2_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -507,7 +538,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_6_Figure_3_v0.jpg"
+    "file": "figures/Ch_6_Figure_3_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -523,7 +555,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_6_Figure_4_v0.jpg"
+    "file": "figures/Ch_6_Figure_4_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -539,7 +572,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_7_Figure_1_v0.jpg"
+    "file": "figures/Ch_7_Figure_1_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -555,7 +589,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_7_Figure_2_v0.jpg"
+    "file": "figures/Ch_7_Figure_2_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -571,7 +606,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_7_Figure_3_v0.jpg"
+    "file": "figures/Ch_7_Figure_3_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  },
@@ -587,7 +623,8 @@ window.MEDECC_FIGURES = [
   "versions": [
    {
     "v": 0,
-    "file": "figures/Ch_7_Figure_4_v0.jpg"
+    "file": "figures/Ch_7_Figure_4_v0.jpg",
+    "mtime": 1791467993
    }
   ]
  }
