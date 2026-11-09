@@ -10,26 +10,36 @@
 <x-dc>
 <helmet data-dc-atomics="">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&amp;display=swap" rel="stylesheet">
 <script src="figures-data.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-html,body{margin:0;height:100%;background:#F2F6FA;font-family:"Public Sans",system-ui,sans-serif}
-a{color:#3E576E}a:hover{color:#E86B00}
+/* ---------------------------------------------------------------------------
+   The dashboard wears the same dress as the figure style guide: one blue
+   carries all the type, labels are reversed chips on #252061, boxes are
+   hairlines with square corners and no shadow. Adjust the blues here; they are
+   page dress, not figure ink. The figure system's own colours live in the
+   figures themselves and must not be restyled.
+   --------------------------------------------------------------------------- */
+html,body{margin:0;height:100%;background:#FFFFFF;color-scheme:light;
+  font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:#2C4B8F;text-decoration-color:#C9D2E6;text-underline-offset:2px}
+a:hover{color:#252061}
 </style>
 </helmet>
 
 <!-- ================= ACCESS GATE ================= -->
 <sc-if value="{{ gateShow }}" hint-placeholder-val="{{ false }}">
-  <div data-screen-label="Access gate" style="height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:linear-gradient(180deg,#43566F 0%,#6C9ECE 100%)">
-    <div style="background:#fff;border-radius:12px;padding:12px 20px"><img src="figures/Logo.png" alt="MedECC" style="height:64px;width:auto;display:block"></div>
-    <div style="color:#fff;font-weight:700;font-size:16px">Figure Review — author access</div>
-    <div style="display:flex;flex-direction:column;gap:9px;width:270px">
-      <input type="password" value="{{ gate.val }}" onChange="{{ gate.on }}" onKeyDown="{{ gate.key }}" placeholder="Shared passphrase" style="font-family:inherit;font-size:14px;padding:10px 12px;border:none;border-radius:8px;color:#43566F;outline-color:#E86B00">
-      <button onClick="{{ gate.go }}" style="font-family:inherit;font-weight:700;font-size:14px;padding:10px;border:none;border-radius:8px;background:#E86B00;color:#fff;cursor:pointer" style-hover="background:#F09125">Enter</button>
-      <div style="font-size:12px;color:#FFD2A6;text-align:center;min-height:16px">{{ gate.msg }}</div>
+  <div data-screen-label="Access gate" style="height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#FFFFFF;padding:24px">
+    <img src="figures/Logo.png" alt="MedECC" style="height:56px;width:auto;display:block">
+    <div style="font-size:11px;letter-spacing:.06em;color:#6F86B5">MedECC &middot; MAR2</div>
+    <div style="font-size:38px;font-weight:300;letter-spacing:.012em;line-height:1.05;color:#2C4B8F">Figure review</div>
+    <div style="display:flex;flex-direction:column;gap:8px;width:286px;margin-top:4px">
+      <input type="password" value="{{ gate.val }}" onChange="{{ gate.on }}" onKeyDown="{{ gate.key }}" placeholder="Shared passphrase" style="font-family:inherit;font-size:13.5px;padding:10px 12px;border:1px solid #C9D2E6;background:#fff;color:#2C4B8F;outline-color:#2C4B8F">
+      <button onClick="{{ gate.go }}" style="font-family:inherit;font-weight:600;font-size:11px;letter-spacing:.06em;padding:11px;border:none;background:#252061;color:#fff;cursor:pointer" style-hover="background:#2C4B8F">ENTER</button>
+      <div style="font-size:12px;color:#B3402B;text-align:center;min-height:16px">{{ gate.msg }}</div>
     </div>
-    <div style="font-size:11px;color:#AFC7DE;text-align:center;width:280px;line-height:1.5">Access is remembered on this device. Passphrase is in the invite email.</div>
+    <div style="font-size:11px;color:#6F86B5;text-align:center;width:300px;line-height:1.55">Access is remembered on this device. Passphrase is in the invite email.</div>
 
   </div>
 </sc-if>
@@ -39,107 +49,118 @@ a{color:#3E576E}a:hover{color:#E86B00}
 <div data-screen-label="Dashboard" style="height:100vh;display:flex;overflow:hidden">
 
   <!-- sidebar -->
-  <div style="width:230px;flex:none;display:flex;flex-direction:column;background:#43566F">
-    <div style="padding:16px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,.12)">
-      <div style="background:#fff;border-radius:7px;padding:5px 7px"><img src="figures/Logo.png" alt="MedECC" style="height:30px;width:auto;display:block"></div>
-      <div style="font-weight:800;font-size:13px;color:#fff;line-height:1.3">Figure<br>Review</div>
+  <div style="width:230px;flex:none;display:flex;flex-direction:column;background:#252061">
+    <div style="padding:16px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,.16)">
+      <div style="background:#fff;padding:5px 7px"><img src="figures/Logo.png" alt="MedECC" style="height:30px;width:auto;display:block"></div>
+      <div style="font-weight:600;font-size:11px;letter-spacing:.06em;color:#fff;line-height:1.5">FIGURE<br>REVIEW</div>
     </div>
     <div style="flex:1;overflow-y:auto;padding:10px 0">
       <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="0">
-        <div onClick="{{ n.on }}" style="display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;background:{{ n.bg }};border-left:3px solid {{ n.mark }}" style-hover="background:rgba(255,255,255,.08)">
-          <span style="font-weight:700;font-size:13px;color:{{ n.fg }}">{{ n.label }}</span>
-          <span style="margin-left:auto;font-size:11px;font-weight:600;color:#AFC7DE">{{ n.count }}</span>
+        <div onClick="{{ n.on }}" style="display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;background:{{ n.bg }};border-left:3px solid {{ n.mark }}" style-hover="background:rgba(255,255,255,.10)">
+          <span style="font-weight:600;font-size:12.5px;letter-spacing:.01em;color:{{ n.fg }}">{{ n.label }}</span>
+          <span style="margin-left:auto;font-size:11px;font-weight:600;color:#8F9BC8">{{ n.count }}</span>
         </div>
       </sc-for>
     </div>
-    <div style="padding:14px 18px;border-top:1px solid rgba(255,255,255,.12);font-size:10.5px;line-height:1.6;color:#AFC7DE">
+    <div style="padding:14px 18px;border-top:1px solid rgba(255,255,255,.16);font-size:10.5px;line-height:1.6;color:#A9B6DC">
       {{ meta.summary }}
     </div>
   </div>
 
   <!-- main -->
   <div style="flex:1;display:flex;flex-direction:column;min-width:0;position:relative">
-    <div style="display:flex;align-items:center;gap:14px;padding:13px 22px;background:#fff;border-bottom:1px solid rgba(67,86,111,.1)">
-      <div style="font-weight:800;font-size:17px;color:#43566F">{{ heading }}</div>
-      <div style="font-size:11.5px;color:#7C8DA0;font-weight:600">{{ headingSub }}</div>
+    <div style="display:flex;align-items:center;gap:12px;padding:13px 22px;background:#fff;border-bottom:1px solid #C9D2E6">
+      <!-- the heading wears the guide's reversed chip -->
+      <div style="background:#252061;color:#fff;font-size:11px;font-weight:600;letter-spacing:.06em;padding:4px 11px 3px">{{ heading }}</div>
+      <div style="font-size:11.5px;color:#6F86B5">{{ headingSub }}</div>
     </div>
-    <div style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat({{ cols }},1fr);gap:15px;align-content:start">
+
+    <!-- the figure style guide, shown as its own page -->
+    <sc-if value="{{ styleShow }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;min-height:0;display:flex;background:#fff">
+        <iframe src="figure-style.html" title="MAR2 figure style" style="flex:1;width:100%;height:100%;border:0;background:#fff"></iframe>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ gridShow }}" hint-placeholder-val="{{ true }}">
+    <div style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat({{ cols }},1fr);gap:16px;align-content:start">
       <sc-for list="{{ figs }}" as="f" hint-placeholder-count="0">
-        <div onClick="{{ f.on }}" style="background:#fff;border:1px solid rgba(67,86,111,.12);border-radius:9px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;min-height:238px" style-hover="border:1px solid #3E576E;box-shadow:0 3px 10px rgba(32,56,168,.16)">
-          <div style="height:195px;min-height:195px;flex:none;background:#fff;border-bottom:1px solid rgba(67,86,111,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px;position:relative">
+        <div onClick="{{ f.on }}" style="background:#fff;border:1px solid #C9D2E6;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;min-height:238px" style-hover="border:1px solid #2C4B8F">
+          <div style="height:195px;min-height:195px;flex:none;background:#fff;border-bottom:1px solid #C9D2E6;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:8px;position:relative">
             <sc-if value="{{ f.hasImg }}" hint-placeholder-val="{{ false }}">
               <img src="{{ f.thumb }}" onError="{{ f.thumbErr }}" loading="lazy" alt="{{ f.label }}" style="max-width:100%;max-height:100%;object-fit:contain">
             </sc-if>
             <sc-if value="{{ f.noImg }}" hint-placeholder-val="{{ false }}">
-              <div style="font-size:11.5px;color:#B3261E;font-weight:700">no file yet</div>
+              <div style="font-size:11px;font-weight:600;letter-spacing:.04em;color:#B3402B">no file yet</div>
             </sc-if>
             <sc-if value="{{ f.isNew }}" hint-placeholder-val="{{ false }}">
-              <span style="position:absolute;top:7px;right:7px;font-size:9.5px;font-weight:800;letter-spacing:.05em;padding:3px 7px;border-radius:999px;background:#E86B00;color:#fff">NEW {{ f.latestLabel }}</span>
+              <span style="position:absolute;top:7px;right:7px;font-size:9.5px;font-weight:600;letter-spacing:.06em;padding:3px 7px 2px;background:#252061;color:#fff">NEW {{ f.latestLabel }}</span>
             </sc-if>
           </div>
           <div style="padding:10px 12px 14px;display:flex;flex-direction:column;gap:6px">
             <div style="display:flex;align-items:center;gap:7px">
-              <span style="font-weight:800;font-size:13.5px;color:#43566F">{{ f.label }}</span>
-              <span style="margin-left:auto;font-size:10.5px;color:#7C8DA0;font-weight:700">{{ f.cLabel }}</span>
+              <span style="font-weight:700;font-size:13px;color:#2C4B8F">{{ f.label }}</span>
+              <span style="margin-left:auto;font-size:10.5px;color:#6F86B5;font-weight:600">{{ f.cLabel }}</span>
             </div>
           </div>
         </div>
       </sc-for>
       <sc-if value="{{ listEmpty }}" hint-placeholder-val="{{ false }}">
-        <div style="grid-column:1/-1;padding:70px 20px;text-align:center;color:#8FA3B5;font-size:13px;font-weight:600">No figures in this category yet — they will appear here automatically once added.</div>
+        <div style="grid-column:1/-1;padding:70px 20px;text-align:center;color:#6F86B5;font-size:13px">No figures in this category yet &mdash; they will appear here automatically once added.</div>
       </sc-if>
     </div>
+    </sc-if>
 
     <!-- detail overlay -->
     <sc-if value="{{ dOpen }}" hint-placeholder-val="{{ false }}">
-      <div style="position:absolute;inset:0;background:rgba(67,86,111,.5);display:flex;align-items:center;justify-content:center;z-index:5;padding:24px" onClick="{{ d.close }}">
-        <div style="width:min(1190px,100%);height:min(760px,100%);background:#fff;border-radius:12px;display:grid;grid-template-columns:1fr 310px;grid-template-rows:minmax(0,100%);overflow:hidden;box-shadow:0 16px 50px rgba(10,20,60,.4);position:relative" onClick="{{ d.stop }}">
-          <button onClick="{{ d.close }}" style="position:absolute;top:12px;right:12px;z-index:3;width:29px;height:29px;border-radius:99px;border:none;background:#EEF6FD;color:#43566F;font-size:14px;cursor:pointer;font-family:inherit;font-weight:700" style-hover="background:#E86B00;color:#fff">✕</button>
-          <div style="display:flex;flex-direction:column;border-right:1px solid rgba(67,86,111,.1);min-width:0;min-height:0">
-            <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid rgba(67,86,111,.08)">
-              <button onClick="{{ d.prev }}" style="width:29px;height:29px;border-radius:99px;border:1px solid rgba(67,86,111,.2);background:#fff;color:#43566F;font-size:13px;cursor:pointer;font-family:inherit" style-hover="background:#EEF6FD">←</button>
-              <button onClick="{{ d.next }}" style="width:29px;height:29px;border-radius:99px;border:1px solid rgba(67,86,111,.2);background:#fff;color:#43566F;font-size:13px;cursor:pointer;font-family:inherit" style-hover="background:#EEF6FD">→</button>
-              <span style="font-weight:800;font-size:16px;color:#43566F">{{ d.sel.label }}</span>
+      <div style="position:absolute;inset:0;background:rgba(18,22,48,.55);display:flex;align-items:center;justify-content:center;z-index:5;padding:24px" onClick="{{ d.close }}">
+        <div style="width:min(1190px,100%);height:min(760px,100%);background:#fff;display:grid;grid-template-columns:1fr 310px;grid-template-rows:minmax(0,100%);overflow:hidden;box-shadow:0 14px 60px rgba(18,22,48,.30);position:relative" onClick="{{ d.stop }}">
+          <button onClick="{{ d.close }}" style="position:absolute;top:6px;right:9px;z-index:3;border:none;background:none;color:#6F86B5;font-size:21px;font-weight:300;line-height:1;cursor:pointer;font-family:inherit;padding:2px 6px" style-hover="color:#2C4B8F">&times;</button>
+          <div style="display:flex;flex-direction:column;border-right:1px solid #C9D2E6;min-width:0;min-height:0">
+            <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #C9D2E6">
+              <button onClick="{{ d.prev }}" style="width:27px;height:27px;border:1px solid #C9D2E6;background:#fff;color:#2C4B8F;font-size:13px;cursor:pointer;font-family:inherit" style-hover="background:#F4F7FB">&larr;</button>
+              <button onClick="{{ d.next }}" style="width:27px;height:27px;border:1px solid #C9D2E6;background:#fff;color:#2C4B8F;font-size:13px;cursor:pointer;font-family:inherit" style-hover="background:#F4F7FB">&rarr;</button>
+              <span style="font-weight:700;font-size:15px;color:#2C4B8F">{{ d.sel.label }}</span>
               <div style="margin-left:auto;display:flex;gap:5px;align-items:center">
                 <sc-for list="{{ d.sel.verChips }}" as="v" hint-placeholder-count="1">
-                  <button onClick="{{ v.on }}" style="padding:4px 10px;border-radius:6px;cursor:pointer;font-family:inherit;font-weight:700;font-size:11.5px;border:1px solid {{ v.bd }};background:{{ v.bg }};color:{{ v.fg }}">{{ v.label }}</button>
+                  <button onClick="{{ v.on }}" style="padding:4px 10px 3px;cursor:pointer;font-family:inherit;font-weight:600;font-size:11px;letter-spacing:.04em;border:1px solid {{ v.bd }};background:{{ v.bg }};color:{{ v.fg }}">{{ v.label }}</button>
                 </sc-for>
                 {{ d.sel.dlEl }}
               </div>
             </div>
-            <div style="flex:1 1 auto;min-height:160px;display:flex;align-items:center;justify-content:center;background:#F7FAFD;padding:16px;overflow:hidden">
+            <div style="flex:1 1 auto;min-height:160px;display:flex;align-items:center;justify-content:center;background:#F4F7FB;padding:16px;overflow:hidden">
               {{ d.sel.imgEl }}
               <sc-if value="{{ d.sel.noImg }}" hint-placeholder-val="{{ false }}">
-                <div style="border:2px dashed rgba(179,38,30,.4);border-radius:10px;padding:38px 56px;text-align:center;color:#B3261E;font-weight:700;font-size:14px">No file uploaded yet</div>
+                <div style="border:1px dashed #D9B6AD;padding:38px 56px;text-align:center;color:#B3402B;font-weight:600;font-size:13px">No file uploaded yet</div>
               </sc-if>
             </div>
-            <div style="padding:12px 18px;border-top:1px solid rgba(67,86,111,.08);overflow-y:auto">
+            <div style="padding:12px 18px;border-top:1px solid #C9D2E6;overflow-y:auto">
               <sc-if value="{{ d.sel.hasNotes }}" hint-placeholder-val="{{ false }}">
-                <div style="margin-top:8px;font-size:11.5px;line-height:1.5;color:#8a5a12;background:#FFF7EC;border:1px solid #F3DFC0;border-radius:6px;padding:7px 10px">{{ d.sel.notes }}</div>
+                <div style="margin-top:8px;font-size:11.5px;line-height:1.55;color:#2C4B8F;background:#F4F7FB;border:1px solid #C9D2E6;padding:8px 10px">{{ d.sel.notes }}</div>
               </sc-if>
             </div>
           </div>
-          <div style="display:flex;flex-direction:column;background:#FAFCFE;min-height:0">
-            <div style="padding:13px 44px 13px 16px;display:flex;flex-direction:column;gap:9px;border-bottom:1px solid rgba(67,86,111,.08)">
-              <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:#8FA3B5;font-weight:600">Contact</span><span style="font-weight:700;color:{{ d.sel.contactFg }}">{{ d.sel.contactLabel }}</span></div>
+          <div style="display:flex;flex-direction:column;background:#FFFFFF;min-height:0">
+            <div style="padding:13px 44px 13px 16px;display:flex;flex-direction:column;gap:9px;border-bottom:1px solid #C9D2E6">
+              <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:#6F86B5">Contact</span><span style="font-weight:600;color:{{ d.sel.contactFg }}">{{ d.sel.contactLabel }}</span></div>
             </div>
             <div style="flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px">
-              <div style="font-size:10px;font-weight:800;letter-spacing:.08em;color:#8FA3B5;text-transform:uppercase">Feedback ({{ d.sel.cCount }})</div>
+              <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:#6F86B5;text-transform:uppercase">Feedback ({{ d.sel.cCount }})</div>
               <sc-for list="{{ d.sel.comments }}" as="cm" hint-placeholder-count="0">
-                <div style="background:#fff;border:1px solid rgba(67,86,111,.1);border-radius:7px;padding:8px 10px">
-                  <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;font-weight:700;color:#3E576E">{{ cm.who }}</span><span style="font-size:10px;color:#A7B6C4">{{ cm.when }}</span></div>
-                  <div style="font-size:11.5px;line-height:1.5;color:#3E576E">{{ cm.text }}</div>
+                <div style="background:#fff;border:1px solid #C9D2E6;padding:8px 10px">
+                  <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;font-weight:600;color:#2C4B8F">{{ cm.who }}</span><span style="font-size:10px;color:#6F86B5">{{ cm.when }}</span></div>
+                  <div style="font-size:11.5px;line-height:1.55;color:#2C4B8F">{{ cm.text }}</div>
                 </div>
               </sc-for>
               <sc-if value="{{ d.sel.noComments }}" hint-placeholder-val="{{ false }}">
-                <div style="font-size:11.5px;color:#A7B6C4;font-style:italic">No feedback yet — be the first.</div>
+                <div style="font-size:11.5px;color:#6F86B5;font-style:italic">No feedback yet &mdash; be the first.</div>
               </sc-if>
             </div>
-            <div style="padding:10px 16px 14px;border-top:1px solid rgba(67,86,111,.08);display:flex;flex-direction:column;gap:6px">
-              <textarea value="{{ d.sel.draft }}" onChange="{{ d.sel.draftOn }}" placeholder="Feedback for the next iteration…" rows="3" style="font-family:inherit;font-size:11.5px;padding:7px 9px;border:1px solid rgba(67,86,111,.18);border-radius:6px;color:#43566F;resize:none;outline-color:#3E576E"></textarea>
+            <div style="padding:10px 16px 14px;border-top:1px solid #C9D2E6;display:flex;flex-direction:column;gap:6px">
+              <textarea value="{{ d.sel.draft }}" onChange="{{ d.sel.draftOn }}" placeholder="Feedback for the next iteration&hellip;" rows="3" style="font-family:inherit;font-size:11.5px;padding:8px 9px;border:1px solid #C9D2E6;color:#2C4B8F;resize:none;outline-color:#2C4B8F"></textarea>
               <div style="display:flex;gap:6px;align-items:center">
-                <input value="{{ who }}" onChange="{{ whoOn }}" placeholder="Your name" style="flex:1;min-width:0;font-family:inherit;font-size:11.5px;font-weight:600;padding:7px 9px;border:1px solid {{ whoBd }};border-radius:6px;color:#43566F;outline-color:#3E576E">
-                <button onClick="{{ d.sel.addOn }}" style="font-family:inherit;font-weight:700;font-size:12px;padding:7px 16px;border:none;border-radius:6px;background:#3E576E;color:#fff;cursor:pointer" style-hover="background:#E86B00">{{ sendLabel }}</button>
+                <input value="{{ who }}" onChange="{{ whoOn }}" placeholder="Your name" style="flex:1;min-width:0;font-family:inherit;font-size:11.5px;padding:8px 9px;border:1px solid {{ whoBd }};color:#2C4B8F;outline-color:#2C4B8F">
+                <button onClick="{{ d.sel.addOn }}" style="font-family:inherit;font-weight:600;font-size:11px;letter-spacing:.05em;padding:8px 14px;border:none;background:#252061;color:#fff;cursor:pointer;white-space:nowrap" style-hover="background:#2C4B8F">{{ sendLabel }}</button>
               </div>
               <div style="font-size:10px;color:{{ whoCol }};min-height:12px">{{ whoMsg }}</div>
             </div>
@@ -357,11 +378,11 @@ class Component extends DCLogic {
     const text = (this.state.drafts[figId] || '').trim();
     if (!text) return;
     const who = (this.state.who || '').trim();
-    if (!who) { this.setState({ whoMsg: 'Please add your name so the feedback is name-stamped.', whoCol: '#B3261E' }); return; }
+    if (!who) { this.setState({ whoMsg: 'Please add your name so the feedback is name-stamped.', whoCol: '#B3402B' }); return; }
     if (this.state.sending) return;
     // Web3Forms access key — public key, safe for client-side code (get/rotate at https://web3forms.com)
     const accessKey = this.props.web3formsKey ?? '4eb5b972-4e0a-47be-95fb-ca527f57c60b';
-    this.setState({ sending: true, whoMsg: '', whoCol: '#B3261E' });
+    this.setState({ sending: true, whoMsg: '', whoCol: '#B3402B' });
     fetch('https://api.web3forms.com/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
@@ -371,10 +392,10 @@ class Component extends DCLogic {
       const when = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
       const comments = { ...this.state.comments };
       comments[figId] = [...(comments[figId] || []), { who, text, when }];
-      this.setState({ comments, drafts: { ...this.state.drafts, [figId]: '' }, sending: false, whoMsg: '✓ Sent by email to the coordinator.', whoCol: '#23A455' });
+      this.setState({ comments, drafts: { ...this.state.drafts, [figId]: '' }, sending: false, whoMsg: '✓ Sent by email to the coordinator.', whoCol: '#2C4B8F' });
     }).catch((err) => {
       const detail = (err && err.fromService && err.message) ? ' (' + err.message + ')' : '';
-      this.setState({ sending: false, whoMsg: 'Could not send' + detail + ' — please email the coordinator directly. Your text is kept above.', whoCol: '#B3261E' });
+      this.setState({ sending: false, whoMsg: 'Could not send' + detail + ' — please email the coordinator directly. Your text is kept above.', whoCol: '#B3402B' });
     });
   }
 
@@ -396,12 +417,12 @@ class Component extends DCLogic {
     const stSel = s.statuses[f.id] || 'In review';
     const status = hasImg ? ('v' + latest.v + ' · ' + stSel.toLowerCase()) : 'file missing';
     const stMap = {
-      'In review': ['#EAF1FB', '#3E576E'],
-      'Feedback received': ['#FFF3E8', '#C2570F'],
-      'Revising': ['#FDF6DC', '#8a6d0b'],
-      'Final': ['#E5F4EA', '#23A455']
+      'In review': ['#F4F7FB', '#6F86B5'],
+      'Feedback received': ['#F6E8E6', '#B3402B'],
+      'Revising': ['#EAEAF2', '#2C4B8F'],
+      'Final': ['#252061', '#FFFFFF']
     };
-    const [stBg, stFg] = hasImg ? (stMap[stSel] || stMap['In review']) : ['#FDECEC', '#B3261E'];
+    const [stBg, stFg] = hasImg ? (stMap[stSel] || stMap['In review']) : ['#B3402B', '#FFFFFF'];
     const thumbOf = (file) => 'thumbs/' + file.split('/').pop().replace(/\.\w+$/, '') + '.jpg';
     return {
       ...f,
@@ -409,7 +430,7 @@ class Component extends DCLogic {
       img: cur ? cur.file : '',
       imgEl: (hasImg && cur.file) ? React.createElement('img', {
         src: cur.file, alt: f.label,
-        style: { maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', background: '#fff', border: '1px solid rgba(67,86,111,.08)' }
+        style: { maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', background: '#fff', border: '1px solid #C9D2E6' }
       }) : null,
       thumb: latest ? thumbOf(latest.file) : '',
       thumbErr: (e) => {
@@ -425,7 +446,7 @@ class Component extends DCLogic {
       date: f.date || '—',
       contactLabel: f.contact || 'TBC',
       contactCard: 'Contact: ' + (f.contact || 'TBC'),
-      contactFg: f.contact ? '#43566F' : '#C2570F',
+      contactFg: f.contact ? '#2C4B8F' : '#B3402B',
       cCount: comments.length,
       cLabel: comments.length ? comments.length + ' 💬' : '',
       comments, noComments: comments.length === 0,
@@ -440,16 +461,16 @@ class Component extends DCLogic {
         // ---- adjust download button colours/spacing here ----
         style: {
           display: 'inline-flex', alignItems: 'center', gap: '5px',
-          padding: '4px 10px', borderRadius: '6px', border: '1px solid rgba(67,86,111,.2)',
-          background: '#fff', color: '#43566F', font: 'inherit', fontSize: '11.5px',
-          fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap'
+          padding: '4px 10px 3px', border: '1px solid #C9D2E6',
+          background: '#fff', color: '#2C4B8F', font: 'inherit', fontSize: '11px',
+          fontWeight: 600, letterSpacing: '.04em', textDecoration: 'none', whiteSpace: 'nowrap'
         }
       }, '\u2193 Download v' + cur.v) : null,
       verChips: versions.map((v, i) => ({
         label: 'v' + v.v,
-        bd: i === vi ? '#3E576E' : 'rgba(67,86,111,.2)',
-        bg: i === vi ? '#3E576E' : '#fff',
-        fg: i === vi ? '#fff' : '#43566F',
+        bd: i === vi ? '#252061' : '#C9D2E6',
+        bg: i === vi ? '#252061' : '#fff',
+        fg: i === vi ? '#fff' : '#2C4B8F',
         on: () => this.setState({ ver: { ...this.state.ver, [f.id]: i } })
       }))
     };
@@ -478,14 +499,20 @@ class Component extends DCLogic {
     const unlocked = s.unlocked || !requireGate;
     const cols = this.props.gridColumns ?? 4;
 
-    const navItems = [{ ch: 0, label: 'All figures' }].concat(chapters.map(ch => ({ ch, label: ch === 'SPM' ? 'SPM' : 'Chapter ' + ch }))).map(n => {
+    // 'style' is not a chapter: it opens the figure style guide in place of the grid
+    const navItems = [{ ch: 0, label: 'All figures' }]
+      .concat(chapters.map(ch => ({ ch, label: ch === 'SPM' ? 'SPM' : 'Chapter ' + ch })))
+      .concat([{ ch: 'style', label: 'Figure style' }])
+      .map(n => {
       const active = s.ch === n.ch;
       return {
         ...n,
-        count: n.ch === 0 ? all.length : all.filter(f => f.chapter === n.ch).length,
+        count: n.ch === 'style' ? ''
+             : n.ch === 0 ? all.length
+             : all.filter(f => f.chapter === n.ch).length,
         bg: active ? 'rgba(255,255,255,.14)' : 'transparent',
-        mark: active ? '#E86B00' : 'transparent',
-        fg: active ? '#fff' : '#c7d0ee',
+        mark: active ? '#FFFFFF' : 'transparent',
+        fg: active ? '#fff' : '#A9B6DC',
         on: () => this.setState({ ch: n.ch })
       };
     });
@@ -509,15 +536,20 @@ class Component extends DCLogic {
       meta: {
         summary: all.length + ' figures · 7 chapters + SPM.'
       },
-      heading: s.ch === 0 ? 'All figures' : (s.ch === 'SPM' ? 'SPM' : 'Chapter ' + s.ch),
-      headingSub: list.length + (list.length === 1 ? ' figure' : ' figures'),
+      heading: s.ch === 'style' ? 'Figure style'
+             : s.ch === 0 ? 'All figures'
+             : (s.ch === 'SPM' ? 'SPM' : 'Chapter ' + s.ch),
+      headingSub: s.ch === 'style' ? 'The style we suggest for MAR2 figures'
+                : list.length + (list.length === 1 ? ' figure' : ' figures'),
+      styleShow: s.ch === 'style',
+      gridShow: s.ch !== 'style',
       listEmpty: list.length === 0,
       cols,
       who: s.who,
       whoOn: (e) => { this.setState({ who: e.target.value, whoMsg: '' }); this.persist('medeccFigWho', e.target.value); },
-      whoBd: (s.whoMsg && s.whoCol === '#B3261E') ? '#B3261E' : 'rgba(67,86,111,.18)',
+      whoBd: (s.whoMsg && s.whoCol === '#B3402B') ? '#B3402B' : '#C9D2E6',
       whoMsg: s.whoMsg || '',
-      whoCol: s.whoCol || '#B3261E',
+      whoCol: s.whoCol || '#B3402B',
       sendLabel: s.sending ? 'Sending…' : 'Send feedback',
       navItems,
       figs,
