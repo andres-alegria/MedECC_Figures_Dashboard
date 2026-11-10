@@ -29,6 +29,61 @@ html,body{margin:0;height:100%;background:#FFFFFF;color-scheme:light;
   font-family:"Open Sans","Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
 a{color:#2C4B8F;text-decoration-color:#C9D2E6;text-underline-offset:2px}
 a:hover{color:#252061}
+
+/* ---------------------------------------------------------------------------
+   Small screens (phones, portrait tablets). Everything below only applies under
+   the breakpoint, so the desktop layout is untouched. The elements carry
+   data-m="…" hooks; !important is needed to beat their inline styles.
+   Adjust the breakpoint here (820px catches portrait iPads).
+   --------------------------------------------------------------------------- */
+@media (max-width:820px){
+  /* the sidebar becomes a slim top bar: brand row + a sideways-scrolling tab row */
+  [data-m="app"]{flex-direction:column !important;height:100dvh !important}
+  [data-m="side"]{width:auto !important}
+  [data-m="brand"]{padding:7px 12px !important;gap:9px !important}   /* adjust top-bar padding here */
+  [data-m="brand-logo"]{padding:3px 5px !important}
+  [data-m="brand-logo"] img{height:20px !important}                 /* adjust logo size here */
+  [data-m="nav"]{flex:none !important;display:flex !important;overflow-x:auto !important;
+    overflow-y:hidden !important;padding:0 4px !important;scrollbar-width:none}
+  [data-m="nav"]::-webkit-scrollbar{display:none}
+  [data-m="nav-item"]{flex:none !important;padding:10px 11px 9px !important;gap:6px !important;
+    border-left:0 !important;background:transparent !important}
+  /* active tab: underline instead of the desktop's left bar */
+  [data-m="nav-item"][data-on="true"]{box-shadow:inset 0 -3px 0 #FFFFFF}   /* adjust active-tab marker here */
+  [data-m="nav-item"] span:first-child{font-size:12px !important;white-space:nowrap}
+  [data-m="summary"]{display:none !important}
+  [data-m="head"]{padding:8px 12px !important}
+  [data-m="head"] > div:first-child{white-space:nowrap;flex:none}   /* heading chip stays on one line */
+  [data-m="head"] > div:last-child{line-height:1.35}
+
+  /* the grid: one figure per row, shown whole instead of cropped to a fixed box */
+  [data-m="grid"]{grid-template-columns:1fr !important;padding:12px !important;gap:12px !important}   /* adjust card spacing here */
+  [data-m="card"]{min-height:0 !important}
+  [data-m="thumb"]{height:auto !important;min-height:0 !important}
+  [data-m="thumb"] img{display:block}
+
+  /* figure detail: full screen, one scrolling column — figure, text, then feedback */
+  [data-m="overlay"]{position:fixed !important;padding:0 !important;align-items:stretch !important}
+  [data-m="dialog"]{width:100% !important;height:100% !important;display:block !important;
+    overflow-y:auto !important;box-shadow:none !important}
+  [data-m="close"]{position:fixed !important;top:6px !important;right:6px !important;
+    font-size:28px !important;background:#FFFFFF !important}
+  [data-m="d-main"]{border-right:0 !important}
+  [data-m="d-bar"]{flex-wrap:wrap !important;row-gap:8px !important;padding:10px 52px 10px 12px !important}
+  [data-m="d-img"]{flex:none !important;min-height:0 !important;padding:8px !important}
+  [data-m="d-img"] img{width:100%;height:auto;max-height:none !important}
+  [data-m="d-text"]{overflow:visible !important;padding:12px !important}
+  [data-m="d-text"]:not(:has(*)){display:none !important}   /* no intent/caption/notes yet: no empty band */
+  [data-m="d-side"]{border-top:1px solid #C9D2E6}
+  [data-m="d-feed"]{overflow:visible !important}
+
+  /* 16px stops iOS from zooming the page when a field is tapped */
+  input,textarea{font-size:16px !important}
+}
+/* two figures per row on wider small screens (large phones in landscape, small tablets) */
+@media (min-width:560px) and (max-width:820px){
+  [data-m="grid"]{grid-template-columns:repeat(2,1fr) !important}
+}
 </style>
 </helmet>
 
@@ -50,30 +105,30 @@ a:hover{color:#252061}
 
 <!-- ================= DASHBOARD ================= -->
 <sc-if value="{{ appShow }}" hint-placeholder-val="{{ false }}">
-<div data-screen-label="Dashboard" style="height:100vh;display:flex;overflow:hidden">
+<div data-screen-label="Dashboard" data-m="app" style="height:100vh;display:flex;overflow:hidden">
 
   <!-- sidebar -->
-  <div style="width:230px;flex:none;display:flex;flex-direction:column;background:#252061">
-    <div style="padding:16px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,.16)">
-      <div style="background:#fff;padding:5px 7px"><img src="figures/Logo.png" alt="MedECC" style="height:30px;width:auto;display:block"></div>
+  <div data-m="side" style="width:230px;flex:none;display:flex;flex-direction:column;background:#252061">
+    <div data-m="brand" style="padding:16px;display:flex;align-items:center;gap:11px;border-bottom:1px solid rgba(255,255,255,.16)">
+      <div data-m="brand-logo" style="background:#fff;padding:5px 7px"><img src="figures/Logo.png" alt="MedECC" style="height:30px;width:auto;display:block"></div>
       <div style="font-weight:600;font-size:11px;letter-spacing:.06em;color:#fff;line-height:1.35">MAR2 Figure dashboard</div>
     </div>
-    <div style="flex:1;overflow-y:auto;padding:10px 0">
+    <div data-m="nav" style="flex:1;overflow-y:auto;padding:10px 0">
       <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="0">
-        <div onClick="{{ n.on }}" style="display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;background:{{ n.bg }};border-left:3px solid {{ n.mark }}" style-hover="background:rgba(255,255,255,.10)">
+        <div onClick="{{ n.on }}" data-m="nav-item" data-on="{{ n.active }}" style="display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;background:{{ n.bg }};border-left:3px solid {{ n.mark }}" style-hover="background:rgba(255,255,255,.10)">
           <span style="font-weight:600;font-size:12.5px;letter-spacing:.01em;color:{{ n.fg }}">{{ n.label }}</span>
           <span style="margin-left:auto;font-size:11px;font-weight:600;color:#8F9BC8">{{ n.count }}</span>
         </div>
       </sc-for>
     </div>
-    <div style="padding:14px 18px;border-top:1px solid rgba(255,255,255,.16);font-size:10.5px;line-height:1.6;color:#A9B6DC">
+    <div data-m="summary" style="padding:14px 18px;border-top:1px solid rgba(255,255,255,.16);font-size:10.5px;line-height:1.6;color:#A9B6DC">
       {{ meta.summary }}
     </div>
   </div>
 
   <!-- main -->
   <div style="flex:1;display:flex;flex-direction:column;min-width:0;position:relative">
-    <div style="display:flex;align-items:center;gap:12px;padding:13px 22px;background:#fff;border-bottom:1px solid #C9D2E6">
+    <div data-m="head" style="display:flex;align-items:center;gap:12px;padding:13px 22px;background:#fff;border-bottom:1px solid #C9D2E6">
       <!-- the heading wears the guide's reversed chip -->
       <div style="background:#252061;color:#fff;font-size:11px;font-weight:600;letter-spacing:.06em;padding:4px 11px 3px">{{ heading }}</div>
       <div style="font-size:11.5px;color:#6F86B5">{{ headingSub }}</div>
@@ -87,12 +142,12 @@ a:hover{color:#252061}
     </sc-if>
 
     <sc-if value="{{ gridShow }}" hint-placeholder-val="{{ true }}">
-    <div style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat({{ cols }},1fr);gap:16px;align-content:start">
+    <div data-m="grid" style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat({{ cols }},1fr);gap:16px;align-content:start">
       <sc-for list="{{ figs }}" as="f" hint-placeholder-count="0">
-        <div onClick="{{ f.on }}" style="background:#fff;border:1px solid #C9D2E6;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;min-height:238px" style-hover="border:1px solid #2C4B8F">
-          <div style="height:195px;min-height:195px;flex:none;background:#fff;border-bottom:1px solid #C9D2E6;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;padding:0;position:relative">
+        <div onClick="{{ f.on }}" data-m="card" style="background:#fff;border:1px solid #C9D2E6;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;min-height:238px" style-hover="border:1px solid #2C4B8F">
+          <div data-m="thumb" style="height:195px;min-height:195px;flex:none;background:#fff;border-bottom:1px solid #C9D2E6;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;padding:0;position:relative">
             <sc-if value="{{ f.hasImg }}" hint-placeholder-val="{{ false }}">
-              <img src="{{ f.thumb }}" onError="{{ f.thumbErr }}" loading="lazy" alt="{{ f.label }}" style="width:100%;height:auto;align-self:flex-start">
+              <img src="{{ f.thumb }}" sc-camel-src-set="{{ f.srcset }}" sizes="(max-width: 820px) 100vw, 1px" onError="{{ f.thumbErr }}" loading="lazy" alt="{{ f.label }}" style="width:100%;height:auto;align-self:flex-start">
             </sc-if>
             <sc-if value="{{ f.noImg }}" hint-placeholder-val="{{ false }}">
               <div style="font-size:11px;font-weight:600;letter-spacing:.04em;color:#B3402B">no file yet</div>
@@ -120,11 +175,11 @@ a:hover{color:#252061}
 
     <!-- detail overlay -->
     <sc-if value="{{ dOpen }}" hint-placeholder-val="{{ false }}">
-      <div style="position:absolute;inset:0;background:rgba(18,22,48,.55);display:flex;align-items:center;justify-content:center;z-index:5;padding:24px" onClick="{{ d.close }}">
-        <div style="width:min(1190px,100%);height:min(760px,100%);background:#fff;display:grid;grid-template-columns:1fr 310px;grid-template-rows:minmax(0,100%);overflow:hidden;box-shadow:0 14px 60px rgba(18,22,48,.30);position:relative" onClick="{{ d.stop }}">
-          <button onClick="{{ d.close }}" style="position:absolute;top:6px;right:9px;z-index:3;border:none;background:none;color:#6F86B5;font-size:21px;font-weight:300;line-height:1;cursor:pointer;font-family:inherit;padding:2px 6px" style-hover="color:#2C4B8F">&times;</button>
-          <div style="display:flex;flex-direction:column;border-right:1px solid #C9D2E6;min-width:0;min-height:0">
-            <div style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #C9D2E6">
+      <div data-m="overlay" style="position:absolute;inset:0;background:rgba(18,22,48,.55);display:flex;align-items:center;justify-content:center;z-index:5;padding:24px" onClick="{{ d.close }}">
+        <div data-m="dialog" style="width:min(1190px,100%);height:min(760px,100%);background:#fff;display:grid;grid-template-columns:1fr 310px;grid-template-rows:minmax(0,100%);overflow:hidden;box-shadow:0 14px 60px rgba(18,22,48,.30);position:relative" onClick="{{ d.stop }}">
+          <button onClick="{{ d.close }}" data-m="close" style="position:absolute;top:6px;right:9px;z-index:3;border:none;background:none;color:#6F86B5;font-size:21px;font-weight:300;line-height:1;cursor:pointer;font-family:inherit;padding:2px 6px" style-hover="color:#2C4B8F">&times;</button>
+          <div data-m="d-main" style="display:flex;flex-direction:column;border-right:1px solid #C9D2E6;min-width:0;min-height:0">
+            <div data-m="d-bar" style="display:flex;align-items:center;gap:10px;padding:13px 18px;border-bottom:1px solid #C9D2E6">
               <button onClick="{{ d.prev }}" style="width:27px;height:27px;border:1px solid #C9D2E6;background:#fff;color:#2C4B8F;font-size:13px;cursor:pointer;font-family:inherit" style-hover="background:#F4F7FB">&larr;</button>
               <button onClick="{{ d.next }}" style="width:27px;height:27px;border:1px solid #C9D2E6;background:#fff;color:#2C4B8F;font-size:13px;cursor:pointer;font-family:inherit" style-hover="background:#F4F7FB">&rarr;</button>
               <span style="font-weight:700;font-size:15px;color:#2C4B8F">{{ d.sel.label }}</span>
@@ -135,13 +190,13 @@ a:hover{color:#252061}
                 {{ d.sel.dlEl }}
               </div>
             </div>
-            <div style="flex:1 1 auto;min-height:160px;display:flex;align-items:center;justify-content:center;background:#F4F7FB;padding:16px;overflow:hidden">
+            <div data-m="d-img" style="flex:1 1 auto;min-height:160px;display:flex;align-items:center;justify-content:center;background:#F4F7FB;padding:16px;overflow:hidden">
               {{ d.sel.imgEl }}
               <sc-if value="{{ d.sel.noImg }}" hint-placeholder-val="{{ false }}">
                 <div style="border:1px dashed #D9B6AD;padding:38px 56px;text-align:center;color:#B3402B;font-weight:600;font-size:13px">No file uploaded yet</div>
               </sc-if>
             </div>
-            <div style="padding:12px 18px;border-top:1px solid #C9D2E6;overflow-y:auto">
+            <div data-m="d-text" style="padding:12px 18px;border-top:1px solid #C9D2E6;overflow-y:auto">
               <sc-if value="{{ d.sel.hasTitle }}" hint-placeholder-val="{{ false }}">
                 <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:#6F86B5;text-transform:uppercase;margin-bottom:4px">Intent</div>
                 <div style="font-size:13px;font-weight:700;line-height:1.45;color:#2C4B8F;margin-bottom:9px">{{ d.sel.title }}</div>
@@ -155,11 +210,11 @@ a:hover{color:#252061}
               </sc-if>
             </div>
           </div>
-          <div style="display:flex;flex-direction:column;background:#FFFFFF;min-height:0">
+          <div data-m="d-side" style="display:flex;flex-direction:column;background:#FFFFFF;min-height:0">
             <div style="padding:13px 44px 13px 16px;display:flex;flex-direction:column;gap:9px;border-bottom:1px solid #C9D2E6">
               <div style="display:flex;justify-content:space-between;font-size:11.5px"><span style="color:#6F86B5">Contact</span><span style="font-weight:600;color:{{ d.sel.contactFg }}">{{ d.sel.contactLabel }}</span></div>
             </div>
-            <div style="flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px">
+            <div data-m="d-feed" style="flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:8px">
               <div style="font-size:10px;font-weight:600;letter-spacing:.08em;color:#6F86B5;text-transform:uppercase">Feedback ({{ d.sel.cCount }})</div>
               <sc-for list="{{ d.sel.comments }}" as="cm" hint-placeholder-count="0">
                 <div style="background:#fff;border:1px solid #C9D2E6;padding:8px 10px">
@@ -451,6 +506,8 @@ class Component extends DCLogic {
         style: { maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', background: '#fff', border: '1px solid #C9D2E6' }
       }) : null,
       thumb: latest ? thumbOf(latest.file) : '',
+      // thumbnail for desktop cards, full file for full-width cards on small screens
+      srcset: latest ? thumbOf(latest.file) + ' 560w, ' + latest.file + ' 1600w' : '',
       thumbErr: (e) => {
         // no thumbnail yet (fresh version) -> fall back to the full-res file
         if (latest && e.target.src.indexOf('thumbs/') !== -1) e.target.src = latest.file;
@@ -542,6 +599,7 @@ class Component extends DCLogic {
       const active = s.ch === n.ch;
       return {
         ...n,
+        active,
         count: n.ch === 'style' ? ''
              : n.ch === 0 ? all.length
              : all.filter(f => f.chapter === n.ch).length,
@@ -571,7 +629,7 @@ class Component extends DCLogic {
       meta: {
         summary: all.length + ' figures · 7 chapters + SPM.'
       },
-      heading: s.ch === 'style' ? 'Figure style'
+      heading: s.ch === 'style' ? 'Figure style guidelines'
              : s.ch === 0 ? 'All figures'
              : (s.ch === 'SPM' ? 'SPM' : 'Chapter ' + s.ch),
       headingSub: s.ch === 'style' ? 'The style we suggest for MAR2 figures'
