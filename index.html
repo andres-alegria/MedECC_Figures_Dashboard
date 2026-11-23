@@ -141,6 +141,14 @@ a:hover{color:#252061}
       </div>
     </sc-if>
 
+    <!-- the shared moodboard, a Padlet board (address set in the moodboardUrl prop below) -->
+    <sc-if value="{{ moodShow }}" hint-placeholder-val="{{ false }}">
+      <!-- adjust the backdrop shown while the board loads here -->
+      <div style="flex:1;min-height:0;display:flex;background:#F4F4F4">
+        <iframe src="{{ moodUrl }}" title="MAR2 moodboard" allow="camera;microphone;geolocation;display-capture;clipboard-write" style="flex:1;width:100%;height:100%;border:0;background:#F4F4F4"></iframe>
+      </div>
+    </sc-if>
+
     <sc-if value="{{ gridShow }}" hint-placeholder-val="{{ true }}">
     <div data-m="grid" style="flex:1;overflow-y:auto;padding:20px;display:grid;grid-template-columns:repeat({{ cols }},1fr);gap:16px;align-content:start">
       <sc-for list="{{ figs }}" as="f" hint-placeholder-count="0">
@@ -246,7 +254,8 @@ a:hover{color:#252061}
 <script type="text/x-dc" data-dc-script data-props="{
   &quot;requirePassphrase&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Access&quot;},
   &quot;gridColumns&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [3, 4, 5], &quot;default&quot;: 4, &quot;tsType&quot;: &quot;number&quot;, &quot;section&quot;: &quot;Layout&quot;},
-  &quot;web3formsKey&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;4eb5b972-4e0a-47be-95fb-ca527f57c60b&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Feedback&quot;}
+  &quot;web3formsKey&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;4eb5b972-4e0a-47be-95fb-ca527f57c60b&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Feedback&quot;},
+  &quot;moodboardUrl&quot;: {&quot;editor&quot;: &quot;text&quot;, &quot;default&quot;: &quot;https://padlet.com/embed/s025qoxqem7pzgefsfmn&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Moodboard&quot;}
 }">
 class Component extends DCLogic {
   state = {
@@ -592,15 +601,18 @@ class Component extends DCLogic {
     const unlocked = s.unlocked || !requireGate;
     const cols = this.props.gridColumns ?? 4;
 
-    // 'style' is not a chapter: it opens the figure style guide in place of the grid
-    const navItems = [{ ch: 'style', label: 'Figure style' }, { ch: 0, label: 'All figures' }]
+    // 'style' and 'mood' are not chapters: each opens an embedded page in place of the grid
+    const pages = ['style', 'mood'];
+    const isPage = pages.includes(s.ch);
+    const navItems = [{ ch: 'style', label: 'Figure style' }, { ch: 'mood', label: 'Moodboard' },
+                      { ch: 0, label: 'All figures' }]
       .concat(chapters.map(ch => ({ ch, label: ch === 'SPM' ? 'SPM' : 'Chapter ' + ch })))
       .map(n => {
       const active = s.ch === n.ch;
       return {
         ...n,
         active,
-        count: n.ch === 'style' ? ''
+        count: pages.includes(n.ch) ? ''
              : n.ch === 0 ? all.length
              : all.filter(f => f.chapter === n.ch).length,
         bg: active ? 'rgba(255,255,255,.14)' : 'transparent',
@@ -630,12 +642,17 @@ class Component extends DCLogic {
         summary: all.length + ' figures · 7 chapters + SPM.'
       },
       heading: s.ch === 'style' ? 'Figure style guidelines'
+             : s.ch === 'mood' ? 'Moodboard'
              : s.ch === 0 ? 'All figures'
              : (s.ch === 'SPM' ? 'SPM' : 'Chapter ' + s.ch),
+      // adjust the page subtitles here
       headingSub: s.ch === 'style' ? 'The style we suggest for MAR2 figures'
+                : s.ch === 'mood' ? 'Graphics that inspire us. Add links, images or PDFs; no account needed.'
                 : list.length + (list.length === 1 ? ' figure' : ' figures'),
       styleShow: s.ch === 'style',
-      gridShow: s.ch !== 'style',
+      moodShow: s.ch === 'mood',
+      moodUrl: this.props.moodboardUrl ?? 'https://padlet.com/embed/s025qoxqem7pzgefsfmn',
+      gridShow: !isPage,
       listEmpty: list.length === 0,
       cols,
       who: s.who,
